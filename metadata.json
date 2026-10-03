@@ -1,0 +1,6 @@
+{
+  "name": "EQUATEUR ZANDO MARKET",
+  "description": "Le grand marché de la RDC et l'Afrique. Faites la promotion de votre marchandise partout où vous êtes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
