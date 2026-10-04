@@ -23,7 +23,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenReportModal })
   const settings = DataStore.getSettings();
 
   const handleResetData = () => {
-    if (window.confirm('Voulez-vous réinitialiser toutes les données de démonstration d’EQUATEUR ZANDO MARKET ?')) {
+    if (window.confirm('Voulez-vous réinitialiser toutes les données de démonstration de MARCHE LUMUMBA RDC ?')) {
       DataStore.resetToDefaults();
       showToast('Données réinitialisées !', 'Toutes les boutiques, produits et commandes de test ont été remis à zéro.', 'success');
       setTimeout(() => {
@@ -93,18 +93,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenReportModal })
             <div className="flex items-center gap-2">
               <img
                 src={DataStore.getMarketLogo()}
-                alt="Logo EQUATEUR ZANDO MARKET"
+                alt="Logo MARCHE LUMUMBA RDC"
                 className="w-8 h-8 rounded-lg object-cover border border-emerald-700 bg-white/10"
               />
-              <span className="font-extrabold text-white text-base tracking-tight">
-                EQUATEUR <span className="text-emerald-400">ZANDO MARKET</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="font-extrabold text-white text-base tracking-tight">
+                  MARCHE <span className="text-emerald-400">LUMUMBA RDC</span>
+                </span>
+                <span className="text-xs text-amber-300 font-bold">
+                  Et partout en Afrique
+                </span>
+              </div>
             </div>
             <p className="text-stone-300 font-semibold text-xs">
-              « LE GRAND MARCHÉ DE LA RDC ET L’AFRIQUE »
+              MARCHE LUMUMBA RDC — Et partout en Afrique 🇨🇩 🌍
             </p>
             <p className="text-stone-400 leading-relaxed max-w-sm">
-              « C'est le moment de faire la promotion de votre marchandise partout où tu es. C'est possible avec EQUATEUR ZANDO MARKET. »
+              « C'est le moment de faire la promotion de votre marchandise partout où tu es. Produits physiques et produits digitaux disponibles sur MARCHE LUMUMBA RDC. »
             </p>
 
             <div className="flex flex-col gap-1.5 pt-2 text-stone-400">
@@ -185,7 +190,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenReportModal })
                   title="Restaurer les données initiales de démonstration"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Réinitialiser Démo EQUATEUR ZANDO MARKET</span>
+                  <span>Réinitialiser Démo MARCHE LUMUMBA RDC</span>
                 </button>
               </li>
             </ul>
@@ -195,7 +200,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenReportModal })
         {/* Bottom copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-stone-500 text-[11px]">
           <div>
-            © {new Date().getFullYear()} EQUATEUR ZANDO MARKET — Le grand marché de la RDC et l'Afrique. Tous droits réservés.
+            © {new Date().getFullYear()} MARCHE LUMUMBA RDC — Et partout en Afrique. Tous droits réservés.
           </div>
           <div className="flex items-center gap-4">
             <span>Abonnement : 4 $/mois</span>

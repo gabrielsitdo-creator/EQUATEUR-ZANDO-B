@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { DataStore } from '../services/storage';
-import { Order, Product } from '../types';
+import { Order, Product, formatPrice } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import {
   User as UserIcon,
@@ -149,7 +149,7 @@ export const ClientDashboardView: React.FC<ClientDashboardViewProps> = ({
                 Vous n'avez pas encore passé de commande
               </h3>
               <p className="text-xs text-stone-500 max-w-sm mx-auto">
-                Explorez les vivres frais, poissons et produits artisanaux disponibles sur EQUATEUR ZANDO.
+                Explorez les produits physiques et digitaux disponibles sur MARCHE LUMUMBA RDC.
               </p>
               <button
                 onClick={() => onNavigate('catalog')}
@@ -185,7 +185,7 @@ export const ClientDashboardView: React.FC<ClientDashboardViewProps> = ({
                         {DataStore.getOrderStatusLabel(ord.status)}
                       </span>
                       <span className="text-xs font-bold text-stone-900">
-                        {ord.totalAmount.toLocaleString('fr-FR')} FC
+                        {formatPrice(ord.totalAmount, ord.currency)}
                       </span>
                     </div>
                   </div>

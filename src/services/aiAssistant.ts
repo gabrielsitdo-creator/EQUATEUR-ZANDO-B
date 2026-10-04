@@ -82,7 +82,7 @@ export class AIAssistantService {
     // Formulate intelligent response
     if (role === 'COMMERÇANT' && (prompt.includes('vendre') || prompt.includes('prix') || prompt.includes('description') || prompt.includes('stock'))) {
       return {
-        message: `Mbote cher commerçant ! Voici quelques conseils pour optimiser votre boutique sur EQUATEUR ZANDO :\n\n1. **Photos nettes** : Photographiez vos produits à la lumière naturelle du jour.\n2. **Prix compétitifs** : Affichez vos prix en FC avec une réduction visible pour attirer les clients du Grand Marché.\n3. **Précision du stand** : Mentionnez clairement votre pavillon et numéro d'allée pour faciliter le retrait direct au marché.`,
+        message: `Mbote cher commerçant ! Voici quelques conseils pour optimiser vos ventes sur MARCHE LUMUMBA RDC :\n\n1. **Produits physiques & digitaux** : Vous pouvez vendre aussi bien des marchandises physiques que des contenus et services digitaux.\n2. **Photos & visuels de qualité** : Mettez en valeur vos produits avec des images nettes et descriptives.\n3. **Prix clairs en FC et USD** : Affichez vos prix pour attirer les acheteurs partout en RDC et en Afrique.\n4. **Contact direct WhatsApp** : Répondez rapidement aux clients pour conclure vos livraisons ou accès numériques.`,
         suggestedAction: {
           label: 'Gérer mes produits',
           actionType: 'open_merchant',
@@ -95,14 +95,14 @@ export class AIAssistantService {
       const topProducts = filtered.slice(0, 3);
       const priceText = maxPrice ? ` à moins de ${maxPrice.toLocaleString()} FC` : '';
       return {
-        message: `Mbote ! J'ai trouvé ${filtered.length} produit(s) correspondant à votre recherche${priceText} disponible(s) sur EQUATEUR ZANDO :`,
+        message: `Mbote ! J'ai trouvé ${filtered.length} produit(s) correspondant à votre recherche${priceText} disponible(s) sur MARCHE LUMUMBA RDC :`,
         matchedProducts: topProducts,
       };
     }
 
     // Default polite guide
     return {
-      message: `Mbote ! Je suis l'Assistant EQUATEUR ZANDO. Je peux vous aider à dénicher les meilleurs produits locaux (poissons fumés, pagnes Super Wax, kits solaires, huiles pures) à Mbandaka, Gemena, Gbadolite ou Lisala. Que désirez-vous trouver aujourd'hui ?`,
+      message: `Mbote ! Je suis l'Assistant MARCHE LUMUMBA. Je peux vous aider à dénicher les meilleurs produits physiques et digitaux (mode, high-tech, e-books, vivres, cosmétiques) à Kinshasa, Lubumbashi, Goma, Mbandaka et partout en Afrique. Que désirez-vous trouver aujourd'hui ?`,
       matchedProducts: products.slice(0, 2),
     };
   }

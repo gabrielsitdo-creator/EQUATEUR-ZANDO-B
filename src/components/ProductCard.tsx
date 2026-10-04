@@ -1,5 +1,5 @@
 import React from 'react';
-import { Product } from '../types';
+import { Product, formatPrice } from '../types';
 import { useCart } from '../context/CartContext';
 import { useNotification } from '../context/NotificationContext';
 import { DataStore } from '../services/storage';
@@ -131,11 +131,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="pt-2 border-t border-stone-100 flex items-center justify-between gap-2">
             <div>
               <div className="font-black text-base text-stone-900 tracking-tight text-emerald-900">
-                {product.price.toLocaleString('fr-FR')} FC
+                {formatPrice(product.price, product.currency)}
               </div>
               {product.oldPrice && (
                 <div className="text-xs text-stone-400 line-through">
-                  {product.oldPrice.toLocaleString('fr-FR')} FC
+                  {formatPrice(product.oldPrice, product.currency)}
                 </div>
               )}
             </div>

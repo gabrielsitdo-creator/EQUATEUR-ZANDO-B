@@ -43,7 +43,7 @@ export const AdminDashboardView: React.FC = () => {
   const [mpesaNumber, setMpesaNumber] = useState(settings.mobileMoneyAccounts?.mpesaNumber || '+243 820 000 000');
   const [airtelNumber, setAirtelNumber] = useState(settings.mobileMoneyAccounts?.airtelNumber || '+243 990 000 000');
   const [orangeNumber, setOrangeNumber] = useState(settings.mobileMoneyAccounts?.orangeNumber || '+243 890 000 000');
-  const [accountName, setAccountName] = useState(settings.mobileMoneyAccounts?.accountName || 'EQUATEUR ZANDO SARL');
+  const [accountName, setAccountName] = useState(settings.mobileMoneyAccounts?.accountName || 'MARCHE LUMUMBA RDC SARL');
 
   // Hero Banner image management
   const currentBanner = DataStore.getHeroBanner();
@@ -180,7 +180,7 @@ export const AdminDashboardView: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-black tracking-tight">
-                Direction Centrale · EQUATEUR ZANDO MARKET
+                Direction Centrale · MARCHE LUMUMBA RDC
               </h1>
               <span className="bg-purple-500/20 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-400/30">
                 ADMINISTRATION
@@ -349,10 +349,10 @@ export const AdminDashboardView: React.FC = () => {
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl border border-stone-200 space-y-4">
             <h2 className="text-base font-black text-stone-900">
-              Bienvenue sur le centre de commande EQUATEUR ZANDO MARKET
+              Bienvenue sur le centre de commande MARCHE LUMUMBA RDC
             </h2>
             <p className="text-xs text-stone-600 leading-relaxed max-w-3xl">
-              EQUATEUR ZANDO MARKET fonctionne comme un grand marché en ligne ouvert. Les commerçants s'enregistrent après paiement obligatoire de 4 $/mois par Mobile Money, exposent leurs produits et organisent eux-mêmes la livraison de leurs commandes en direct avec les clients.
+              MARCHE LUMUMBA RDC fonctionne comme un grand marché national en ligne ouvert à toute l'Afrique. Les commerçants et créateurs s'enregistrent après paiement obligatoire de 4 $/mois par Mobile Money, exposent leurs produits physiques et digitaux et organisent la livraison ou l'accès avec leurs clients.
             </p>
           </div>
         </div>
@@ -400,9 +400,10 @@ export const AdminDashboardView: React.FC = () => {
                   <span className="inline-block text-[10px] font-black text-amber-300 uppercase tracking-widest bg-amber-400/20 border border-amber-400/30 px-2.5 py-0.5 rounded-full self-start mb-2 backdrop-blur-md">
                     APERÇU DU BLOC HERO
                   </span>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white">EQUATEUR ZANDO MARKET</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white">MARCHE LUMUMBA RDC</h3>
+                  <p className="text-amber-300 text-xs font-bold">Et partout en Afrique 🇨🇩 🌍</p>
                   <p className="text-xs text-stone-200 mt-1.5 leading-relaxed">
-                    « C'est le moment de faire la promotion de votre marchandise partout où tu es. C'est possible avec EQUATEUR ZANDO MARKET. »
+                    « C'est le moment de faire la promotion de votre marchandise partout où tu es. Produits physiques et produits digitaux disponibles sur MARCHE LUMUMBA RDC. »
                   </p>
                   <div className="mt-4 bg-white/20 backdrop-blur-md border border-white/20 p-2.5 rounded-xl text-[11px] text-white/90">
                     🔍 Barre de recherche et rayons de supermarché clairement visibles sur la droite
@@ -527,7 +528,7 @@ export const AdminDashboardView: React.FC = () => {
                   Paiements boutiques & Abonnements Commerçants
                 </h3>
                 <p className="text-xs text-stone-500 mt-0.5">
-                  Tarif obligatoire : 4 $ / mois pour l'ouverture d'une boutique sur EQUATEUR ZANDO MARKET.
+                  Tarif obligatoire : 4 $ / mois pour l'ouverture d'une boutique sur MARCHE LUMUMBA RDC.
                 </p>
               </div>
               <span className="bg-purple-100 text-purple-900 font-bold px-3 py-1 rounded-full text-xs self-start sm:self-auto">
@@ -660,7 +661,7 @@ export const AdminDashboardView: React.FC = () => {
                     value={accountName}
                     onChange={(e) => setAccountName(e.target.value)}
                     className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl font-bold"
-                    placeholder="EQUATEUR ZANDO SARL"
+                    placeholder="MARCHE LUMUMBA RDC SARL"
                   />
                 </div>
               </div>
@@ -680,7 +681,7 @@ export const AdminDashboardView: React.FC = () => {
       {activeTab === 'shops' && (
         <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs">
           <div className="p-4 bg-stone-50 border-b border-stone-200 font-bold text-xs text-stone-700 flex justify-between items-center">
-            <span>Toutes les boutiques inscrites sur EQUATEUR ZANDO MARKET</span>
+            <span>Toutes les boutiques inscrites sur MARCHE LUMUMBA RDC</span>
             <span className="text-stone-400 font-normal">{shops.length} marchands</span>
           </div>
 
@@ -860,7 +861,7 @@ export const AdminDashboardView: React.FC = () => {
                   <th className="p-3.5">Boutique</th>
                   <th className="p-3.5">Montant Vente</th>
                   <th className="p-3.5">Taux</th>
-                  <th className="p-3.5">Commission Zando</th>
+                  <th className="p-3.5">Commission Marché</th>
                   <th className="p-3.5">Net Commerçant</th>
                 </tr>
               </thead>
@@ -887,7 +888,7 @@ export const AdminDashboardView: React.FC = () => {
       {activeTab === 'settings' && (
         <div className="bg-white p-6 rounded-3xl border border-stone-200 max-w-xl space-y-4 text-xs">
           <h3 className="font-bold text-base text-stone-900 pb-2 border-b border-stone-100">
-            Configuration globale EQUATEUR ZANDO MARKET
+            Configuration globale MARCHE LUMUMBA RDC
           </h3>
 
           <form onSubmit={handleSaveSettings} className="space-y-4">

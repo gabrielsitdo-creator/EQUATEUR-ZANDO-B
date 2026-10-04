@@ -30,11 +30,11 @@ export const PromotionsView: React.FC<PromotionsViewProps> = ({
         </div>
 
         <h1 className="text-2xl sm:text-4xl font-black tracking-tight">
-          🔥 PROMOTIONS EQUATEUR ZANDO
+          🔥 PROMOTIONS MARCHE LUMUMBA RDC
         </h1>
 
         <p className="text-xs sm:text-sm text-white/90 max-w-lg leading-relaxed">
-          Profitez de remises exclusives jusqu'à -20% directement auprès de nos commerçants partenaires à Mbandaka et Gemena.
+          Profitez de remises exclusives sur les produits physiques et digitaux directement auprès de nos commerçants et créateurs en RDC et partout en Afrique.
         </p>
       </div>
 

@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import { DataStore } from '../services/storage';
-import { DeliveryType, PaymentMethod, Order } from '../types';
+import { DeliveryType, PaymentMethod, Order, formatPrice } from '../types';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -39,7 +39,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
   const [clientEmail, setClientEmail] = useState(currentUser?.email || '');
 
   // Address (free manual text input as required by Section 15, 27)
-  const [city, setCity] = useState(currentUser?.city || 'Karawa');
+  const [city, setCity] = useState(currentUser?.city || 'Kinshasa');
   const [quartier, setQuartier] = useState(currentUser?.zone || 'Centre');
   const [streetDetails, setStreetDetails] = useState(
     currentUser?.address || 'Marché central ou domicile'
@@ -94,6 +94,8 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
       unitPrice: it.product.price,
       quantity: it.quantity,
       totalPrice: it.product.price * it.quantity,
+      currency: it.product.currency || 'CDF',
+      currency_code: it.product.currency || 'CDF',
     }));
 
     const result = DataStore.createOrder({
@@ -409,7 +411,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                   <div className="text-stone-400 text-[11px]">{it.product.shopName} ({it.product.city})</div>
                 </div>
                 <div className="font-bold text-stone-900 flex-shrink-0">
-                  {it.quantity} x {it.product.price.toLocaleString('fr-FR')} FC
+                  {it.quantity} x {formatPrice(it.product.price, it.product.currency)}
                 </div>
               </div>
             ))}
@@ -417,22 +419,27 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
 
           <div className="pt-3 border-t border-stone-200 space-y-2 text-xs text-stone-600">
             <div className="flex justify-between">
-              <span>Sous-total articles :</span>
-              <span className="font-bold text-stone-900">{subtotal.toLocaleString('fr-FR')} FC</span>
-            </div>
-
-            <div className="flex justify-between">
               <span>Mode de réception :</span>
               <span className="font-semibold text-stone-800">
                 {deliveryType === 'market_pickup' ? 'Retrait chez commerçant (Gratuit)' : 'Livraison directe'}
               </span>
             </div>
 
-            <div className="pt-2 border-t border-stone-200 flex justify-between items-baseline">
-              <span className="font-black text-sm text-stone-900">Total à payer :</span>
-              <span className="font-black text-2xl text-emerald-950">
-                {totalAmount.toLocaleString('fr-FR')} FC
-              </span>
+            <div className="pt-2 border-t border-stone-200 space-y-1">
+              <span className="font-black text-sm text-stone-900 block">Total à payer :</span>
+              {Array.from(new Set(items.map((it) => it.product.currency || 'CDF'))).map((cur) => {
+                const curTotal = items
+                  .filter((it) => (it.product.currency || 'CDF') === cur)
+                  .reduce((sum, it) => sum + it.product.price * it.quantity, 0);
+                return (
+                  <div key={cur} className="flex justify-between items-baseline">
+                    <span className="text-xs text-stone-500 font-semibold">Devise {cur} :</span>
+                    <span className="font-black text-xl text-emerald-950">
+                      {formatPrice(curTotal, cur)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

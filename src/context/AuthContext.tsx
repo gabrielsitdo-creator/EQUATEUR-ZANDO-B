@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRole, Shop, PaymentMethod } from '../types';
+import { User, UserRole, Shop, PaymentMethod, CurrencyCode } from '../types';
 import { DataStore } from '../services/storage';
 
 interface AuthContextType {
@@ -29,6 +29,8 @@ interface AuthContextType {
     marketName?: string;
     standNumber?: string;
     description: string;
+    currency?: CurrencyCode;
+    currency_code?: CurrencyCode;
     logoUrl?: string;
     bannerUrl?: string;
   }) => { user: User; shop: Shop };

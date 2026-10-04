@@ -1,5 +1,5 @@
 import React from 'react';
-import { Order } from '../types';
+import { Order, formatPrice } from '../types';
 import { DataStore } from '../services/storage';
 import {
   CheckCircle2,
@@ -144,7 +144,7 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
 
           <div className="flex gap-2">
             <a
-              href={`https://wa.me/${merchantWhatsapp}?text=Bonjour%20je%20vous%20contacte%20concernant%20ma%20commande%20${order.orderNumber}%20sur%20EQUATEUR%20ZANDO%20MARKET`}
+              href={`https://wa.me/${merchantWhatsapp}?text=Bonjour%20je%20vous%20contacte%20concernant%20ma%20commande%20${order.orderNumber}%20sur%20MARCHE%20LUMUMBA%20RDC`}
               target="_blank"
               rel="noreferrer"
               className="px-4 py-2.5 rounded-xl bg-emerald-800 text-white font-bold flex items-center gap-1.5 hover:bg-emerald-900 shadow-xs"
@@ -219,10 +219,10 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
 
                 <div className="text-right flex-shrink-0">
                   <div className="font-semibold text-stone-600">
-                    {it.quantity} x {it.unitPrice.toLocaleString('fr-FR')} FC
+                    {it.quantity} x {formatPrice(it.unitPrice, it.currency || order.currency)}
                   </div>
                   <div className="font-bold text-stone-900">
-                    {it.totalPrice.toLocaleString('fr-FR')} FC
+                    {formatPrice(it.totalPrice, it.currency || order.currency)}
                   </div>
                 </div>
               </div>
@@ -234,7 +234,7 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
         <div className="pt-2 border-t border-stone-100 flex justify-between items-baseline text-xs">
           <span className="font-black text-sm text-stone-900">Total payé :</span>
           <span className="text-emerald-950 font-black text-xl">
-            {order.totalAmount.toLocaleString('fr-FR')} FC
+            {formatPrice(order.totalAmount, order.currency)}
           </span>
         </div>
 

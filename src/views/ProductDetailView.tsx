@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product, Shop } from '../types';
+import { Product, Shop, formatPrice } from '../types';
 import { useCart } from '../context/CartContext';
 import { useNotification } from '../context/NotificationContext';
 import { DataStore } from '../services/storage';
@@ -187,16 +187,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           {/* Pricing Box */}
           <div className="p-4 bg-emerald-50/60 border border-emerald-200/80 rounded-2xl flex items-baseline gap-3">
             <span className="text-3xl font-black text-emerald-950 tracking-tight">
-              {product.price.toLocaleString('fr-FR')} FC
+              {formatPrice(product.price, product.currency)}
             </span>
             {product.oldPrice && (
               <span className="text-base text-stone-400 line-through">
-                {product.oldPrice.toLocaleString('fr-FR')} FC
+                {formatPrice(product.oldPrice, product.currency)}
               </span>
             )}
             {product.discountPercent && (
               <span className="text-xs font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">
-                Économie de {(product.oldPrice! - product.price).toLocaleString('fr-FR')} FC
+                Économie de {formatPrice(product.oldPrice! - product.price, product.currency)}
               </span>
             )}
           </div>
@@ -315,7 +315,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </button>
 
               <a
-                href={`https://wa.me/${whatsappPhone}?text=Bonjour%20${encodeURIComponent(product.shopName)},%20je%20suis%20intéressé%20par%20votre%20produit%20sur%20EQUATEUR%20ZANDO%20MARKET:%20${encodeURIComponent(product.name)}`}
+                href={`https://wa.me/${whatsappPhone}?text=Bonjour%20${encodeURIComponent(product.shopName)},%20je%20suis%20intéressé%20par%20votre%20produit%20sur%20MARCHE%20LUMUMBA%20RDC:%20${encodeURIComponent(product.name)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="py-2.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"

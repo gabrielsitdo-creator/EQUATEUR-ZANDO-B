@@ -64,11 +64,14 @@ export const MerchantSubscriptionView: React.FC<MerchantSubscriptionViewProps> =
 
         <h1 className="text-3xl sm:text-4xl font-black text-stone-900 tracking-tight">
           Ouvrez votre boutique sur <br />
-          <span className="text-emerald-800">EQUATEUR ZANDO MARKET</span>
+          <span className="text-emerald-800">MARCHE LUMUMBA RDC</span>
         </h1>
+        <p className="text-amber-800 font-bold text-xs uppercase tracking-wider">
+          Et partout en Afrique 🇨🇩 🌍
+        </p>
 
         <p className="text-xs sm:text-sm text-stone-600 max-w-lg mx-auto leading-relaxed">
-          Rejoignez le grand marché en ligne de la RDC et de l'Afrique. Vendez à des milliers de clients partout où vous êtes.
+          Rejoignez le grand marché national en ligne de la RDC et de l'Afrique. Vendez vos produits physiques et digitaux à des milliers de clients.
         </p>
       </div>
 

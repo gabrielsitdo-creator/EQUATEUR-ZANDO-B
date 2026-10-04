@@ -1,5 +1,178 @@
 export type UserRole = 'CLIENT' | 'COMMERÇANT' | 'ADMINISTRATEUR';
 
+// --- SYSTÈME DE 10 DEVISES - MARCHE LUMUMBA RDC ---
+export type CurrencyCode =
+  | 'CDF' // 🇨🇩 CDF — Franc congolais (FC) — République démocratique du Congo
+  | 'USD' // 🌍 USD — Dollar américain ($) — Devise internationale
+  | 'XOF' // 🌍 XOF — Franc CFA BCEAO — Afrique de l'Ouest
+  | 'XAF' // 🌍 XAF — Franc CFA BEAC — Afrique centrale
+  | 'ZAR' // 🇿🇦 ZAR — Rand sud-africain (R) — Afrique du Sud
+  | 'NGN' // 🇳🇬 NGN — Naira nigérian (₦) — Nigeria
+  | 'GHS' // 🇬🇭 GHS — Cedi ghanéen (GH₵) — Ghana
+  | 'KES' // 🇰🇪 KES — Shilling kényan (KSh) — Kenya
+  | 'TZS' // 🇹🇿 TZS — Shilling tanzanien (TSh) — Tanzanie
+  | 'UGX'; // 🇺🇬 UGX — Shilling ougandais (USh) — Ouganda
+
+export interface CurrencyOption {
+  code: CurrencyCode;
+  name: string;
+  symbol: string;
+  flag: string;
+  region: string;
+  label: string;
+  example: string;
+}
+
+export const SUPPORTED_CURRENCIES: CurrencyOption[] = [
+  {
+    code: 'CDF',
+    name: 'Franc congolais',
+    symbol: 'FC',
+    flag: '🇨🇩',
+    region: 'République démocratique du Congo',
+    label: '🇨🇩 CDF — Franc congolais (FC)',
+    example: '50 000 FC',
+  },
+  {
+    code: 'USD',
+    name: 'Dollar américain',
+    symbol: '$',
+    flag: '🌍',
+    region: 'Devise internationale',
+    label: '🌍 USD — Dollar américain ($)',
+    example: '25 $',
+  },
+  {
+    code: 'XOF',
+    name: 'Franc CFA BCEAO',
+    symbol: 'XOF',
+    flag: '🌍',
+    region: "Afrique de l'Ouest",
+    label: "🌍 XOF — Franc CFA BCEAO (Afrique de l'Ouest)",
+    example: '15 000 XOF',
+  },
+  {
+    code: 'XAF',
+    name: 'Franc CFA BEAC',
+    symbol: 'XAF',
+    flag: '🌍',
+    region: 'Afrique centrale',
+    label: '🌍 XAF — Franc CFA BEAC (Afrique centrale)',
+    example: '15 000 XAF',
+  },
+  {
+    code: 'ZAR',
+    name: 'Rand sud-africain',
+    symbol: 'R',
+    flag: '🇿🇦',
+    region: 'Afrique du Sud',
+    label: '🇿🇦 ZAR — Rand sud-africain (R)',
+    example: '500 R',
+  },
+  {
+    code: 'NGN',
+    name: 'Naira nigérian',
+    symbol: '₦',
+    flag: '🇳🇬',
+    region: 'Nigeria',
+    label: '🇳🇬 NGN — Naira nigérian (₦)',
+    example: '30 000 ₦',
+  },
+  {
+    code: 'GHS',
+    name: 'Cedi ghanéen',
+    symbol: 'GH₵',
+    flag: '🇬🇭',
+    region: 'Ghana',
+    label: '🇬🇭 GHS — Cedi ghanéen (GH₵)',
+    example: '200 GH₵',
+  },
+  {
+    code: 'KES',
+    name: 'Shilling kényan',
+    symbol: 'KSh',
+    flag: '🇰🇪',
+    region: 'Kenya',
+    label: '🇰🇪 KES — Shilling kényan (KSh)',
+    example: '1 500 KSh',
+  },
+  {
+    code: 'TZS',
+    name: 'Shilling tanzanien',
+    symbol: 'TSh',
+    flag: '🇹🇿',
+    region: 'Tanzanie',
+    label: '🇹🇿 TZS — Shilling tanzanien (TSh)',
+    example: '50 000 TSh',
+  },
+  {
+    code: 'UGX',
+    name: 'Shilling ougandais',
+    symbol: 'USh',
+    flag: '🇺🇬',
+    region: 'Ouganda',
+    label: '🇺🇬 UGX — Shilling ougandais (USh)',
+    example: '100 000 USh',
+  },
+];
+
+export function getCurrencySymbol(code?: CurrencyCode | string): string {
+  const c = (code || 'CDF').toUpperCase();
+  switch (c) {
+    case 'USD':
+      return '$';
+    case 'XOF':
+      return 'XOF';
+    case 'XAF':
+      return 'XAF';
+    case 'ZAR':
+      return 'R';
+    case 'NGN':
+      return '₦';
+    case 'GHS':
+      return 'GH₵';
+    case 'KES':
+      return 'KSh';
+    case 'TZS':
+      return 'TSh';
+    case 'UGX':
+      return 'USh';
+    case 'CDF':
+    case 'FC':
+    default:
+      return 'FC';
+  }
+}
+
+export function formatPrice(amount: number, code?: CurrencyCode | string): string {
+  const c = (code || 'CDF').toUpperCase();
+  const formatted = Number(amount || 0).toLocaleString('fr-FR');
+  switch (c) {
+    case 'USD':
+      return `${formatted} $`;
+    case 'XOF':
+      return `${formatted} XOF`;
+    case 'XAF':
+      return `${formatted} XAF`;
+    case 'ZAR':
+      return `${formatted} R`;
+    case 'NGN':
+      return `${formatted} ₦`;
+    case 'GHS':
+      return `${formatted} GH₵`;
+    case 'KES':
+      return `${formatted} KSh`;
+    case 'TZS':
+      return `${formatted} TSh`;
+    case 'UGX':
+      return `${formatted} USh`;
+    case 'CDF':
+    case 'FC':
+    default:
+      return `${formatted} FC`;
+  }
+}
+
 export interface User {
   id: string;
   name: string;
@@ -67,6 +240,8 @@ export interface Shop {
   address?: string; // Free text (e.g. Marché central de Karawa, stand 15)
   marketName?: string;
   standNumber?: string;
+  currency?: CurrencyCode; // Devise choisie par le vendeur (ex: CDF, USD, XOF, etc.)
+  currency_code?: CurrencyCode;
   logoUrl: string;
   bannerUrl: string;
   isVerified: boolean;
@@ -83,8 +258,10 @@ export interface Product {
   shopName: string;
   name: string;
   description: string;
-  price: number; // in FC
-  oldPrice?: number; // in FC
+  price: number; // Montant saisi dans la devise de la boutique
+  oldPrice?: number;
+  currency?: CurrencyCode; // Devise du produit (héritée de la boutique ou définie par le vendeur)
+  currency_code?: CurrencyCode;
   discountPercent?: number;
   stock: number;
   category: string;
@@ -130,6 +307,8 @@ export interface OrderItem {
   unitPrice: number;
   quantity: number;
   totalPrice: number;
+  currency?: CurrencyCode;
+  currency_code?: CurrencyCode;
 }
 
 export interface Order {
@@ -141,9 +320,11 @@ export interface Order {
   clientWhatsapp?: string;
   clientEmail?: string;
   items: OrderItem[];
-  subtotal: number; // in FC
-  deliveryFee: number; // in FC (convenu ou gratuit)
-  totalAmount: number; // in FC
+  subtotal: number;
+  deliveryFee: number;
+  totalAmount: number;
+  currency?: CurrencyCode;
+  currency_code?: CurrencyCode;
   status: OrderStatus;
   deliveryType: DeliveryType;
   deliveryAddress: {
@@ -264,7 +445,7 @@ export interface PlatformSettings {
   subscriptionPromoDurationMonths: number; // 3
   testPaymentMode: boolean;
   heroBannerImage?: string; // Miniature du marché / background du Hero
-  marketLogoUrl?: string; // Logo du marché EQUATEUR ZANDO MARKET
+  marketLogoUrl?: string; // Logo du marché MARCHE LUMUMBA RDC
   mobileMoneyAccounts?: {
     mpesaNumber: string;
     airtelNumber: string;

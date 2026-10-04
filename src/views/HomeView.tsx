@@ -70,14 +70,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
     });
 
   const popularSearches = [
-    'Chaussures',
-    'Karawa',
-    'Chaussures Karawa',
+    'Kinshasa',
     'Téléphone',
-    'Riz',
+    'Produits digitaux',
+    'Chaussures',
+    'Goma',
     'Super Wax',
-    'Huile de palme Karawa',
-    'Mbandaka',
+    'Lubumbashi',
+    'E-books',
   ];
 
   const heroImage = DataStore.getHeroBanner();
@@ -90,7 +90,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         {/* Background Image: Supermarché moderne aux rayons colorés */}
         <img
           src={heroImage}
-          alt="Supermarché moderne aux rayons colorés — EQUATEUR ZANDO MARKET"
+          alt="Supermarché moderne aux rayons colorés — MARCHE LUMUMBA RDC"
           className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none transition-transform duration-700 ease-out"
         />
 
@@ -106,21 +106,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Logo officiel présent */}
             <img
               src={marketLogo}
-              alt="Logo EQUATEUR ZANDO MARKET"
+              alt="Logo MARCHE LUMUMBA RDC"
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover shadow-2xl border-2 border-amber-400/60 bg-white/10 backdrop-blur-md p-0.5"
             />
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-black tracking-wider uppercase backdrop-blur-md shadow-xs">
               <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span>LE GRAND MARCHÉ DE LA RDC ET L’AFRIQUE</span>
+              <span>MARCHÉ NATIONAL RDC & AFRIQUE · PRODUITS PHYSIQUES & DIGITAUX</span>
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
-            EQUATEUR <span className="text-emerald-400">ZANDO MARKET</span>
-          </h1>
+          <div className="space-y-1">
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+              MARCHE <span className="text-emerald-400">LUMUMBA RDC</span>
+            </h1>
+            <p className="text-amber-300 text-lg sm:text-2xl font-black tracking-wide flex items-center gap-2 drop-shadow-sm">
+              <span>Et partout en Afrique</span>
+              <span className="text-xs bg-amber-400/20 border border-amber-400/40 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                🇨🇩 🌍
+              </span>
+            </p>
+          </div>
 
           <p className="text-stone-100 text-sm sm:text-base leading-relaxed max-w-2xl font-medium drop-shadow-sm">
-            « C'est le moment de faire la promotion de votre marchandise partout où tu es. C'est possible avec EQUATEUR ZANDO MARKET. »
+            « C'est le moment de faire la promotion de votre marchandise partout où tu es. Produits physiques et produits digitaux disponibles sur MARCHE LUMUMBA RDC. »
           </p>
 
           {/* Central Search Bar */}
@@ -275,7 +283,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <span>Boutiques Actives du Grand Marché</span>
             </h3>
             <p className="text-xs text-stone-500">
-              Des commerçants vérifiés à Karawa, Mbandaka, Businga, Kinshasa...
+              Des commerçants vérifiés à Kinshasa, Lubumbashi, Goma, Mbandaka et partout en Afrique...
             </p>
           </div>
 
@@ -300,13 +308,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
         <div className="bg-gradient-to-r from-stone-900 to-emerald-950 text-white p-6 sm:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 border border-emerald-800/40">
           <div className="space-y-1.5 max-w-xl text-center md:text-left">
             <span className="text-amber-400 font-bold text-xs uppercase tracking-wider">
-              Offre Commerçant · 4 $ / mois (Promo 3 mois)
+              Offre Commerçant & Créateur · 4 $ / mois (Promo 3 mois)
             </span>
             <h3 className="text-xl sm:text-2xl font-black tracking-tight">
-              Faites la promotion de vos marchandises partout en RDC
+              Faites la promotion de vos produits physiques & digitaux partout en RDC et en Afrique
             </h3>
             <p className="text-stone-300 text-xs leading-relaxed">
-              Ouvrez votre boutique en 3 minutes, publiez vos produits, gérez vos prix en FC et organisez vos livraisons librement.
+              Ouvrez votre boutique en 3 minutes, publiez vos produits physiques ou contenus digitaux, gérez vos prix en FC ou USD et développez votre clientèle partout en RDC et en Afrique.
             </p>
           </div>
 

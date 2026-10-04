@@ -27,7 +27,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   const [history, setHistory] = useState<Array<{ role: 'user' | 'assistant'; text: string; products?: Product[] }>>([
     {
       role: 'assistant',
-      text: 'Mbote ! Je suis l’Assistant EQUATEUR ZANDO IA. Dites-moi ce que vous recherchez (ex: « Je cherche une paire de chaussures homme noire à moins de 30 000 FC » ou « Huile de palme pure de Gemena »), et je trouve les produits correspondants disponibles sur les marchés de l’Équateur !',
+      text: 'Mbote ! Je suis l’Assistant MARCHE LUMUMBA IA. Dites-moi ce que vous recherchez en produits physiques ou digitaux (ex: « Chaussures homme en cuir », « E-book entrepreneuriat », « Riz local », « Super Wax »), et je trouve les meilleures offres partout en RDC et en Afrique !',
     },
   ]);
 
@@ -84,13 +84,13 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base leading-tight">ASSISTANT EQUATEUR ZANDO IA</h3>
+                <h3 className="font-bold text-base leading-tight">ASSISTANT MARCHE LUMUMBA IA</h3>
                 <span className="text-[10px] bg-amber-400 text-stone-950 font-black px-1.5 py-0.5 rounded uppercase">
                   V1 Active
                 </span>
               </div>
               <p className="text-xs text-stone-300">
-                Recherche intelligente & conseils commerce en RDC
+                Recherche intelligente & conseils commerce en RDC et Afrique
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           {loading && (
             <div className="flex items-center gap-2 text-stone-500 text-xs italic">
               <Sparkles className="w-4 h-4 animate-spin text-amber-500" />
-              L'Assistant EQUATEUR ZANDO consulte les marchés locaux...
+              L'Assistant MARCHE LUMUMBA consulte les catalogues physiques et digitaux...
             </div>
           )}
         </div>

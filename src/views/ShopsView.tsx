@@ -41,10 +41,10 @@ export const ShopsView: React.FC<ShopsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div>
           <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-            Boutiques & Vendeurs du Grand Équateur
+            Boutiques & Vendeurs RDC & Afrique
           </h1>
           <p className="text-xs text-stone-500 mt-1">
-            Découvrez nos marchands certifiés avec stands physiques à Mbandaka, Gemena, Gbadolite et Lisala
+            Découvrez nos marchands certifiés en République Démocratique du Congo et partout en Afrique — Produits physiques & digitaux
           </p>
         </div>
 

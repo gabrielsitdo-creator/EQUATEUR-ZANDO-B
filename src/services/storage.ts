@@ -18,6 +18,8 @@ import {
   OrderItem,
   OrderStatus,
   SubscriptionStatus,
+  CurrencyCode,
+  formatPrice,
 } from '../types';
 
 import {
@@ -110,7 +112,7 @@ export class DataStore {
         mpesaNumber: s.mobileMoneyAccounts?.mpesaNumber || defaultSettings.mobileMoneyAccounts?.mpesaNumber || '+243 820 000 000',
         airtelNumber: s.mobileMoneyAccounts?.airtelNumber || defaultSettings.mobileMoneyAccounts?.airtelNumber || '+243 990 000 000',
         orangeNumber: s.mobileMoneyAccounts?.orangeNumber || defaultSettings.mobileMoneyAccounts?.orangeNumber || '+243 890 000 000',
-        accountName: s.mobileMoneyAccounts?.accountName || defaultSettings.mobileMoneyAccounts?.accountName || 'EQUATEUR ZANDO SARL',
+        accountName: s.mobileMoneyAccounts?.accountName || defaultSettings.mobileMoneyAccounts?.accountName || 'MARCHE LUMUMBA RDC SARL',
       },
       heroBannerImage: s.heroBannerImage || defaultSettings.heroBannerImage,
       marketLogoUrl: s.marketLogoUrl || defaultSettings.marketLogoUrl,
@@ -122,7 +124,11 @@ export class DataStore {
   }
 
   static getMarketLogo(): string {
-    return this.getSettings().marketLogoUrl || defaultSettings.marketLogoUrl || '/images/Design Concepts Author Portfolio _ Freepik.jpg';
+    const custom = this.getSettings().marketLogoUrl;
+    if (custom && !custom.includes('Design Concepts') && !custom.includes('Freepik')) {
+      return custom;
+    }
+    return defaultSettings.marketLogoUrl || '/images/marche_lumumba_logo.jpg';
   }
 
   static updateSettings(partial: Partial<PlatformSettings>): PlatformSettings {
@@ -181,8 +187,8 @@ export class DataStore {
 
     this.addNotification({
       userId: newUser.id,
-      title: 'Bienvenue sur EQUATEUR ZANDO MARKET !',
-      message: 'Votre compte client est prêt. Découvrez tous les produits disponibles en RDC.',
+      title: 'Bienvenue sur MARCHE LUMUMBA RDC !',
+      message: 'Votre compte client est prêt. Découvrez tous les produits physiques et digitaux disponibles en RDC et partout en Afrique.',
       type: 'system',
       linkUrl: '/',
     });
@@ -232,7 +238,7 @@ export class DataStore {
     end.setMonth(end.getMonth() + settings.subscriptionPromoDurationMonths);
     const endDate = end.toISOString().split('T')[0];
 
-    const transactionRef = `EZM-${params.paymentMethod.toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const transactionRef = `MLM-${params.paymentMethod.toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const newSub: MerchantSubscription = {
       id: `sub-${timestamp}`,
@@ -341,6 +347,8 @@ export class DataStore {
     marketName?: string;
     standNumber?: string;
     description: string;
+    currency?: CurrencyCode;
+    currency_code?: CurrencyCode;
     logoUrl?: string;
     bannerUrl?: string;
   }): { user: User; shop: Shop } {
@@ -354,6 +362,8 @@ export class DataStore {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
+
+    const shopCurrency = data.currency || data.currency_code || 'CDF';
 
     const newShop: Shop = {
       id: shopId,
@@ -371,6 +381,8 @@ export class DataStore {
       address: data.address.trim(),
       marketName: data.marketName,
       standNumber: data.standNumber,
+      currency: shopCurrency,
+      currency_code: shopCurrency,
       logoUrl: data.logoUrl || 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=200&auto=format&fit=crop&q=80',
       bannerUrl: data.bannerUrl || 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=800&auto=format&fit=crop&q=80',
       isVerified: false,
@@ -508,8 +520,12 @@ export class DataStore {
     productData: Omit<Product, 'id' | 'rating' | 'reviewCount' | 'createdAt'>
   ): Product {
     const products = this.getProducts();
+    const shop = this.getShopById(productData.shopId);
+    const currency = productData.currency || productData.currency_code || shop?.currency || 'CDF';
     const newProduct: Product = {
       ...productData,
+      currency,
+      currency_code: currency,
       id: `prod-${Date.now()}`,
       rating: 5.0,
       reviewCount: 0,
@@ -732,7 +748,7 @@ export class DataStore {
     const commissions = this.getCommissions();
 
     const timestamp = Date.now();
-    const orderNumber = `EZM-${new Date().getFullYear()}-${String(orders.length + 1).padStart(3, '0')}`;
+    const orderNumber = `MLM-${new Date().getFullYear()}-${String(orders.length + 1).padStart(3, '0')}`;
     const orderId = `ord-${timestamp}`;
 
     let paymentTransactionRef = '';
@@ -759,6 +775,8 @@ export class DataStore {
       subtotal: params.subtotal,
       deliveryFee: params.deliveryFee,
       totalAmount: params.totalAmount,
+      currency: params.items[0]?.currency || 'CDF',
+      currency_code: params.items[0]?.currency || 'CDF',
       status: 'confirmed', // Commerçant receives confirmed order to organize delivery
       deliveryType: params.deliveryType,
       deliveryAddress: params.deliveryAddress,
@@ -802,7 +820,7 @@ export class DataStore {
       orderId: newOrder.id,
       orderNumber: newOrder.orderNumber,
       shopId: firstShop?.shopId || 'multiple',
-      shopName: firstShop?.shopName || 'Boutiques Équateur Zando',
+      shopName: firstShop?.shopName || 'Boutiques MARCHE LUMUMBA RDC',
       orderAmount: params.subtotal,
       ratePercent: commissionRate,
       commissionAmount: commissionTotal,
@@ -817,7 +835,7 @@ export class DataStore {
     this.addNotification({
       userId: params.clientId,
       title: 'Commande validée ! 📦',
-      message: `Votre commande ${orderNumber} de ${params.totalAmount.toLocaleString()} FC est bien enregistrée. Le commerçant prépare votre livraison.`,
+      message: `Votre commande ${orderNumber} de ${formatPrice(params.totalAmount, newOrder.currency)} est bien enregistrée. Le commerçant prépare votre livraison.`,
       type: 'order',
       linkUrl: `/orders/${newOrder.id}`,
     });

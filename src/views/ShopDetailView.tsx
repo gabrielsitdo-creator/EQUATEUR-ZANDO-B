@@ -123,7 +123,7 @@ export const ShopDetailView: React.FC<ShopDetailViewProps> = ({
           <div className="flex flex-wrap sm:flex-col gap-2 self-start sm:self-auto flex-shrink-0">
             {whatsappPhone && (
               <a
-                href={`https://wa.me/${whatsappPhone}?text=Mbote!%20Je%20vous%20contacte%20depuis%20votre%20boutique%20sur%20EQUATEUR%20ZANDO%20MARKET`}
+                href={`https://wa.me/${whatsappPhone}?text=Mbote!%20Je%20vous%20contacte%20depuis%20votre%20boutique%20sur%20MARCHE%20LUMUMBA%20RDC`}
                 target="_blank"
                 rel="noreferrer"
                 className="px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-colors"

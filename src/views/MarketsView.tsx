@@ -20,10 +20,10 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8">
       <div>
         <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-          Les Grands Marchés de la Région de l'Équateur
+          Les Grands Marchés & Espaces Commerciaux de la RDC
         </h1>
         <p className="text-xs text-stone-500 mt-1">
-          Explorez les carrefours commerciaux de Mbandaka, Gemena, Gbadolite et Lisala
+          Explorez les carrefours commerciaux en République Démocratique du Congo et les espaces de vente en ligne ouverts à toute l'Afrique
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+import { formatPrice } from '../types';
 import { Trash2, ArrowRight, ShoppingBag, Store, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 interface CartViewProps {
@@ -18,6 +19,14 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
     deliveryType,
   } = useCart();
 
+  // Compute breakdown by currency for multiple shops/currencies
+  const totalsByCurrency: Record<string, number> = {};
+  items.forEach((it) => {
+    const c = it.product.currency || 'CDF';
+    totalsByCurrency[c] = (totalsByCurrency[c] || 0) + it.product.price * it.quantity;
+  });
+  const currencyKeys = Object.keys(totalsByCurrency);
+
   if (items.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-4">
@@ -28,7 +37,7 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
           Votre panier est vide
         </h2>
         <p className="text-xs text-stone-500 max-w-sm mx-auto">
-          Découvrez les meilleurs poissons fumés, pagnes Super Wax, kits solaires et vivres frais des marchés de l'Équateur.
+          Découvrez les meilleurs articles de mode, vivres frais, technologies, kits solaires et produits digitaux de MARCHE LUMUMBA RDC.
         </p>
         <button
           onClick={() => onNavigate('catalog')}
@@ -48,7 +57,7 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
             Mon Panier ({items.length} article(s))
           </h1>
           <p className="text-xs text-stone-500">
-            Articles sélectionnés auprès des commerçants de l'Équateur
+            Articles sélectionnés auprès des commerçants de MARCHE LUMUMBA RDC (RDC & Afrique)
           </p>
         </div>
         <button
@@ -84,7 +93,7 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
                     <span>{item.product.city}</span>
                   </div>
                   <div className="font-black text-sm text-emerald-900">
-                    {item.product.price.toLocaleString('fr-FR')} FC
+                    {formatPrice(item.product.price, item.product.currency)}
                   </div>
                 </div>
               </div>
@@ -112,7 +121,7 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
                 <div className="text-right">
                   <div className="text-xs text-stone-400">Total</div>
                   <div className="font-black text-sm text-stone-900">
-                    {(item.product.price * item.quantity).toLocaleString('fr-FR')} FC
+                    {formatPrice(item.product.price * item.quantity, item.product.currency)}
                   </div>
                 </div>
 
@@ -132,7 +141,7 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
             className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 pt-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Continuer mes achats sur EQUATEUR ZANDO</span>
+            <span>Continuer mes achats sur MARCHE LUMUMBA RDC</span>
           </button>
         </div>
 
@@ -143,11 +152,14 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
           </h2>
 
           <div className="space-y-2.5 text-xs">
-            <div className="flex justify-between text-stone-600">
-              <span>Sous-total articles :</span>
-              <span className="font-bold text-stone-900">
-                {subtotal.toLocaleString('fr-FR')} FC
-              </span>
+            <div className="space-y-1 text-stone-600 pb-2 border-b border-stone-100">
+              <span className="block font-semibold">Sous-total par devise :</span>
+              {currencyKeys.map((c) => (
+                <div key={c} className="flex justify-between font-bold text-stone-900">
+                  <span>Articles en {c} :</span>
+                  <span>{formatPrice(totalsByCurrency[c], c)}</span>
+                </div>
+              ))}
             </div>
 
             <div className="flex justify-between text-stone-600">
@@ -155,22 +167,20 @@ export const CartView: React.FC<CartViewProps> = ({ onNavigate }) => {
               <span className="font-semibold text-stone-800">
                 {deliveryType === 'market_pickup'
                   ? 'Retrait au marché (Gratuit)'
-                  : 'Livraison Moto'}
+                  : 'Livraison Moto / Directe'}
               </span>
             </div>
 
-            <div className="flex justify-between text-stone-600">
-              <span>Frais de livraison estimés :</span>
-              <span className="font-bold text-stone-900">
-                {deliveryFee === 0 ? 'GRATUIT' : `${deliveryFee.toLocaleString('fr-FR')} FC`}
-              </span>
-            </div>
-
-            <div className="pt-3 border-t border-stone-200 flex justify-between items-baseline">
-              <span className="font-black text-sm text-stone-900">Total à payer :</span>
-              <span className="font-black text-xl text-emerald-950">
-                {totalAmount.toLocaleString('fr-FR')} FC
-              </span>
+            <div className="pt-3 border-t border-stone-200 space-y-1">
+              <span className="font-black text-sm text-stone-900 block">Total à payer :</span>
+              {currencyKeys.map((c) => (
+                <div key={c} className="flex justify-between items-baseline">
+                  <span className="text-xs text-stone-500 font-semibold">Devise {c} :</span>
+                  <span className="font-black text-xl text-emerald-950">
+                    {formatPrice(totalsByCurrency[c], c)}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 

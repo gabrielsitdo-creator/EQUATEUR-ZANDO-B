@@ -356,7 +356,7 @@ export const MerchantDashboardView: React.FC<MerchantDashboardViewProps> = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-sm text-stone-900">
-              Tous vos produits en ligne sur EQUATEUR ZANDO MARKET
+              Tous vos produits physiques & digitaux sur MARCHE LUMUMBA RDC
             </h3>
             <button
               onClick={openAddModal}
@@ -554,7 +554,7 @@ export const MerchantDashboardView: React.FC<MerchantDashboardViewProps> = ({
                         </p>
                         <div className="flex flex-wrap gap-2">
                           <a
-                            href={`https://wa.me/${clientWhatsappPhone}?text=Bonjour%20${encodeURIComponent(ord.clientName)},%20je%20suis%20le%20commerçant%20${encodeURIComponent(currentShop.name)}%20sur%20EQUATEUR%20ZANDO%20MARKET%20pour%20votre%20commande%20${ord.orderNumber}.`}
+                            href={`https://wa.me/${clientWhatsappPhone}?text=Bonjour%20${encodeURIComponent(ord.clientName)},%20je%20suis%20le%20commerçant%20${encodeURIComponent(currentShop.name)}%20sur%20MARCHE%20LUMUMBA%20RDC%20pour%20votre%20commande%20${ord.orderNumber}.`}
                             target="_blank"
                             rel="noreferrer"
                             className="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl font-bold text-[11px] flex items-center gap-1.5 shadow-xs transition-colors"
@@ -659,7 +659,7 @@ export const MerchantDashboardView: React.FC<MerchantDashboardViewProps> = ({
           </div>
 
           <p className="text-stone-500 text-[11px] leading-relaxed">
-            Votre abonnement donne le droit de publier vos produits, de les modifier, d'accéder aux promotions et de recevoir des commandes en direct des clients sur <strong>EQUATEUR ZANDO MARKET</strong>.
+            Votre abonnement donne le droit de publier vos produits physiques et digitaux, de les modifier, d'accéder aux promotions et de recevoir des commandes en direct des clients sur <strong>MARCHE LUMUMBA RDC</strong>.
           </p>
 
           <button
@@ -688,20 +688,28 @@ export const MerchantDashboardView: React.FC<MerchantDashboardViewProps> = ({
               />
             </div>
 
-            <div>
-              <label className="font-bold text-stone-700 block mb-1">Ville (saisie libre)</label>
-              <input
-                type="text"
-                defaultValue={currentShop.city}
-                className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl"
-              />
+            <div className="pt-2 border-t border-stone-100">
+              <h4 className="font-bold text-stone-900 mb-2">Emplacement physique & Stand au marché</h4>
+              <div>
+                <label className="font-bold text-stone-700 block mb-1">Ville (saisie manuelle) *</label>
+                <input
+                  type="text"
+                  defaultValue={currentShop.city}
+                  placeholder="Ex: Kinshasa, Lubumbashi, Goma, Mbandaka..."
+                  className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl"
+                />
+                <span className="text-[10px] text-stone-400 mt-0.5 block">
+                  Écrivez manuellement votre ville (RDC ou Afrique).
+                </span>
+              </div>
             </div>
 
             <div>
-              <label className="font-bold text-stone-700 block mb-1">Adresse précise (marché, stand)</label>
+              <label className="font-bold text-stone-700 block mb-1">Adresse précise (marché, stand, galerie) *</label>
               <input
                 type="text"
                 defaultValue={currentShop.address}
+                placeholder="Ex: Marché Central, Stand 15 ou En ligne"
                 className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl"
               />
             </div>

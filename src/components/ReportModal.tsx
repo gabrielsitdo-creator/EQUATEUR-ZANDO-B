@@ -81,7 +81,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
               Votre signalement a été enregistré
             </h4>
             <p className="text-stone-600 leading-relaxed">
-              Merci de nous aider à maintenir la qualité et la confiance sur <strong>EQUATEUR ZANDO MARKET</strong>. Notre service client prendra contact si nécessaire.
+              Merci de nous aider à maintenir la qualité et la confiance sur <strong>MARCHE LUMUMBA RDC</strong>. Notre service client prendra contact si nécessaire.
             </p>
             <div className="p-3 bg-stone-50 rounded-xl text-stone-600 space-y-1 text-left border border-stone-200">
               <div className="font-bold text-stone-800">Support direct :</div>

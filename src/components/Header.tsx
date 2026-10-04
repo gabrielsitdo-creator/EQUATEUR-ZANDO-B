@@ -133,15 +133,15 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <img
               src={DataStore.getMarketLogo()}
-              alt="Logo EQUATEUR ZANDO MARKET"
+              alt="Logo MARCHE LUMUMBA RDC"
               className="w-10 h-10 rounded-xl object-cover shadow-sm border border-emerald-700 bg-white/10"
             />
             <div className="flex flex-col">
               <span className="font-black text-lg md:text-xl tracking-tight text-stone-900 leading-tight">
-                EQUATEUR <span className="text-emerald-800">ZANDO MARKET</span>
+                MARCHE <span className="text-emerald-800">LUMUMBA RDC</span>
               </span>
-              <span className="text-[10px] text-stone-500 font-semibold tracking-wide">
-                Grand Marché Ouvert · RDC & Afrique
+              <span className="text-[10px] text-amber-700 font-bold tracking-wide">
+                Et partout en Afrique 🇨🇩 🌍
               </span>
             </div>
           </div>

@@ -76,10 +76,10 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [shopName, setShopName] = useState(projectedShopName);
   const [category, setCategory] = useState(categories[0]?.name || 'Alimentation & Vivres');
-  const [city, setCity] = useState('Mbandaka');
-  const [territory, setTerritory] = useState('Mbandaka-Ville');
+  const [city, setCity] = useState('Kinshasa');
+  const [territory, setTerritory] = useState('Gombe');
   const [zone, setZone] = useState('Centre Commercial');
-  const [marketName, setMarketName] = useState(markets[0]?.name || 'Grand Marché Central de Mbandaka');
+  const [marketName, setMarketName] = useState('Grand Marché Central');
   const [standNumber, setStandNumber] = useState('');
   const [description, setDescription] = useState('');
   const [shopLogoUrl, setShopLogoUrl] = useState('');
@@ -93,7 +93,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
       ? settings.mobileMoneyAccounts?.airtelNumber || '+243 990 000 000'
       : settings.mobileMoneyAccounts?.orangeNumber || '+243 890 000 000';
 
-  const platformAccountName = settings.mobileMoneyAccounts?.accountName || 'EQUATEUR ZANDO SARL';
+  const platformAccountName = settings.mobileMoneyAccounts?.accountName || 'MARCHE LUMUMBA RDC SARL';
 
   // STEP 3: Handle Mobile Money Payment Initiation
   const handleInitiatePayment = (e: React.FormEvent) => {
@@ -220,7 +220,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
       ownerName: ownerName.trim(),
       phone: phone.trim(),
       whatsapp: whatsapp.trim() || phone.trim(),
-      email: email.trim() || `${phone.replace(/[^0-9]/g, '')}@equateurzando.cd`,
+      email: email.trim() || `${phone.replace(/[^0-9]/g, '')}@marchelumumba.cd`,
       shopName: shopName.trim(),
       category,
       city: city.trim(),
@@ -236,7 +236,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
 
     showToast(
       'Boutique créée et activée avec succès ! 🎉',
-      `Bienvenue sur EQUATEUR ZANDO MARKET, la boutique ${shopName} est maintenant active et visible en ligne.`,
+      `Bienvenue sur MARCHE LUMUMBA RDC, la boutique ${shopName} est maintenant active et visible en ligne.`,
       'success'
     );
 
@@ -249,15 +249,18 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
       <div className="bg-stone-900 text-white rounded-3xl p-6 shadow-xl border border-stone-800 text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider border border-amber-400/30">
           <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-          <span>OUVERTURE DE BOUTIQUE COMMERÇANT</span>
+          <span>OUVERTURE DE BOUTIQUE COMMERÇANT & CRÉATEUR</span>
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-          Ouvrez votre boutique sur <span className="text-emerald-400">EQUATEUR ZANDO MARKET</span>
+          Ouvrez votre boutique sur <span className="text-emerald-400">MARCHE LUMUMBA RDC</span>
         </h1>
+        <p className="text-amber-300 font-bold text-xs uppercase tracking-wider">
+          Et partout en Afrique 🇨🇩 🌍
+        </p>
 
         <p className="text-xs text-stone-300 max-w-md mx-auto leading-relaxed">
-          Exposez votre marchandise partout en RDC et en Afrique. Tarif : 4 $ / mois pour une visibilité illimitée.
+          Exposez vos produits physiques et digitaux partout en RDC et en Afrique. Tarif : 4 $ / mois pour une visibilité illimitée.
         </p>
 
         {/* Stepper visual */}
@@ -430,7 +433,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
             {/* Platform Official Receiver Display */}
             <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-1">
               <span className="font-bold text-stone-900 block text-[11px]">
-                Compte récepteur officiel EQUATEUR ZANDO MARKET :
+                Compte récepteur officiel MARCHE LUMUMBA RDC :
               </span>
               <div className="flex flex-wrap items-center justify-between text-[11px] text-stone-600">
                 <span>Titulaire : <strong className="text-stone-900">{platformAccountName}</strong></span>
@@ -790,18 +793,20 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="font-bold text-stone-700 block mb-1">Ville <span className="text-red-500">*</span> :</label>
-                  <select
+                  <label className="font-bold text-stone-700 block mb-1">
+                    Ville (saisie manuelle) <span className="text-red-500">*</span> :
+                  </label>
+                  <input
+                    type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
+                    placeholder="Ex: Kinshasa, Lubumbashi, Goma, Mbandaka..."
                     className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-900 font-semibold"
-                  >
-                    {cities.map((c: City) => (
-                      <option key={c.id} value={c.name}>
-                        {c.name} ({c.province})
-                      </option>
-                    ))}
-                  </select>
+                    required
+                  />
+                  <span className="text-[10px] text-stone-400 mt-0.5 block">
+                    Écrivez manuellement votre ville (RDC ou Afrique).
+                  </span>
                 </div>
 
                 <div>
@@ -810,7 +815,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
                     type="text"
                     value={territory}
                     onChange={(e) => setTerritory(e.target.value)}
-                    placeholder="Ex: Mbandaka-Ville"
+                    placeholder="Ex: Gombe, Wangata, Ibanda..."
                     className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-900"
                   />
                 </div>
@@ -830,19 +835,18 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold text-stone-700 block mb-1">
-                    Nom du marché :
+                    Nom du marché ou espace commercial :
                   </label>
-                  <select
+                  <input
+                    type="text"
                     value={marketName}
                     onChange={(e) => setMarketName(e.target.value)}
-                    className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-900"
-                  >
-                    {markets.map((m: Market) => (
-                      <option key={m.id} value={m.name}>
-                        {m.name} ({m.cityName || m.city})
-                      </option>
-                    ))}
-                  </select>
+                    placeholder="Ex: Grand Marché Central, Marché de la Liberté, En ligne..."
+                    className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-900 font-semibold"
+                  />
+                  <span className="text-[10px] text-stone-400 mt-0.5 block">
+                    Marché physique ou mention « En ligne » pour produits digitaux.
+                  </span>
                 </div>
 
                 <div>
@@ -853,7 +857,7 @@ export const RegisterMerchantView: React.FC<RegisterMerchantViewProps> = ({
                     type="text"
                     value={standNumber}
                     onChange={(e) => setStandNumber(e.target.value)}
-                    placeholder="Ex: Stand 15 / Allée C"
+                    placeholder="Ex: Stand 15 / Allée C / En ligne"
                     className="w-full p-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-900 font-bold"
                     required
                   />
