@@ -275,6 +275,22 @@ export interface Product {
   promoStartDate?: string;
   promoEndDate?: string;
   createdAt: string;
+  // --- NOUVEAU: VENTE PRODUIT DIGITAL OU PHYSIQUE ---
+  productType?: 'physical' | 'digital'; // Défaut 'physical'
+  digitalType?:
+    | 'pdf'
+    | 'ebook'
+    | 'formation'
+    | 'video'
+    | 'audio'
+    | 'musique'
+    | 'logiciel'
+    | 'zip'
+    | 'autre';
+  digitalDeliveryUrl?: string; // Lien de livraison du produit digital
+  digitalDownloadLimit?: number; // Limite de téléchargements (0 = illimité)
+  digitalExpiryDays?: number; // Expiration du lien en jours (0 = pas d'expiration)
+  acceptedPaymentMethods?: string[]; // Moyens de paiement acceptés pour ce produit
 }
 
 export interface CartItem {
@@ -291,11 +307,19 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
-export type PaymentMethod = 'mpesa' | 'airtel' | 'orange' | 'cash_on_delivery';
+export type PaymentMethod =
+  | 'saspay'
+  | 'mpesa'
+  | 'airtel'
+  | 'orange'
+  | 'paypal'
+  | 'stripe'
+  | 'bank_transfer'
+  | 'cash_on_delivery';
 
 export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed' | 'cancelled';
 
-export type DeliveryType = 'home_delivery' | 'market_pickup';
+export type DeliveryType = 'home_delivery' | 'market_pickup' | 'digital_instant';
 
 export interface OrderItem {
   id: string;
@@ -309,6 +333,8 @@ export interface OrderItem {
   totalPrice: number;
   currency?: CurrencyCode;
   currency_code?: CurrencyCode;
+  productType?: 'physical' | 'digital';
+  digitalType?: string;
 }
 
 export interface Order {
@@ -341,10 +367,94 @@ export interface Order {
   paymentStatus: PaymentStatus;
   paymentTransactionRef?: string;
   isTestPayment: boolean;
-  commissionTotal: number; // in FC (5%)
+  commissionTotal: number; // in currency
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  // Digital delivery integration
+  containsDigitalItems?: boolean;
+  digitalDeliveryLinks?: DigitalDeliveryLink[];
+}
+
+export interface MerchantPaymentAccount {
+  id: string;
+  shopId: string;
+  merchantId: string;
+  // 1. SASPAY.me mobile money gateway
+  saspayEnabled: boolean;
+  saspayMerchantId?: string;
+  saspaySecretKey?: string;
+  hasSaspaySecretKey?: boolean;
+  saspayMaskedKey?: string;
+  saspayWalletPhone?: string;
+  saspayEnvironment?: 'live' | 'test';
+  saspayStatus?: 'connected' | 'disconnected' | 'pending';
+  // 2. Mobile Money direct RDC
+  directMobileMoneyEnabled: boolean;
+  mpesaNumber?: string;
+  airtelNumber?: string;
+  orangeNumber?: string;
+  mobileMoneyAccountName?: string;
+  mobileMoneyStatus?: 'connected' | 'disconnected';
+  // 3. PayPal
+  paypalEnabled: boolean;
+  paypalEmail?: string;
+  paypalMeLink?: string;
+  paypalClientId?: string;
+  hasPaypalSecret?: boolean;
+  paypalMaskedSecret?: string;
+  paypalEnvironment?: 'live' | 'sandbox';
+  paypalStatus?: 'connected' | 'disconnected';
+  // 4. Stripe
+  stripeEnabled: boolean;
+  stripeAccountId?: string;
+  stripePublishableKey?: string;
+  hasStripeSecretKey?: boolean;
+  stripeMaskedKey?: string;
+  stripeMode?: 'connect' | 'api_keys';
+  stripeStatus?: 'connected' | 'disconnected';
+  // 5. Compte bancaire
+  bankEnabled: boolean;
+  bankName?: string;
+  bankAccountNumber?: string;
+  bankAccountHolder?: string;
+  bankSwiftIban?: string;
+  // Instructions & metadata
+  paymentInstructions?: string;
+  lastTestedAt?: string;
+  vaultStatus?: 'ENCRYPTED_SERVER_SIDE' | 'UNCONFIGURED';
+  updatedAt: string;
+}
+
+export interface DigitalDeliveryLink {
+  id: string;
+  orderId: string;
+  orderNumber: string;
+  productId: string;
+  productName: string;
+  shopId: string;
+  shopName?: string;
+  clientId: string;
+  clientEmail?: string;
+  clientPhone?: string;
+  secureAccessToken: string;
+  deliveryUrl: string; // Lien original renseigné par le commerçant
+  digitalType?: string;
+  downloadLimit: number; // 0 = illimité
+  downloadCount: number;
+  expiresAt?: string; // ISO date
+  isActive: boolean;
+  createdAt: string;
+  lastDownloadedAt?: string;
+}
+
+export interface DownloadLog {
+  id: string;
+  deliveryLinkId: string;
+  orderId: string;
+  productId: string;
+  timestamp: string;
+  userAgent?: string;
 }
 
 export interface Commission {

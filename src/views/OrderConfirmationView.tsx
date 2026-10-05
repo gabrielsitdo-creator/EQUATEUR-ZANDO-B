@@ -13,6 +13,12 @@ import {
   AlertTriangle,
   Receipt,
   MessageCircle,
+  Download,
+  FileText,
+  ExternalLink,
+  ShieldCheck as ShieldCheckIcon,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 interface OrderConfirmationViewProps {
@@ -56,6 +62,31 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
   const firstItem = order.items[0];
   const merchantShop = firstItem ? DataStore.getShopById(firstItem.shopId) : undefined;
   const merchantWhatsapp = (merchantShop?.ownerWhatsapp || merchantShop?.ownerPhone || '+243833358006').replace(/[^0-9]/g, '');
+
+  const [downloadMessages, setDownloadMessages] = React.useState<Record<string, string>>({});
+  const [copiedToken, setCopiedToken] = React.useState<string | null>(null);
+
+  const handleDownload = (linkId: string) => {
+    const res = DataStore.recordDigitalDownload(linkId, navigator.userAgent);
+    if (res.success && res.deliveryUrl) {
+      setDownloadMessages((prev) => ({
+        ...prev,
+        [linkId]: res.remaining && res.remaining >= 0 ? `Téléchargé ! (${res.remaining} restant(s))` : 'Téléchargé avec succès !',
+      }));
+      window.open(res.deliveryUrl, '_blank');
+    } else {
+      setDownloadMessages((prev) => ({
+        ...prev,
+        [linkId]: res.message || 'Téléchargement impossible.',
+      }));
+    }
+  };
+
+  const handleCopyLink = (token: string, url: string) => {
+    navigator.clipboard?.writeText(url);
+    setCopiedToken(token);
+    setTimeout(() => setCopiedToken(null), 2500);
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
@@ -160,6 +191,103 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({
               <span>Appeler</span>
             </a>
           </div>
+        </div>
+      )}
+
+      {/* Digital Products Instant Access Card */}
+      {order.digitalDeliveryLinks && order.digitalDeliveryLinks.length > 0 && (
+        <div className="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-7 space-y-4 shadow-xl border border-blue-800">
+          <div className="flex items-center justify-between pb-3 border-b border-blue-800/80">
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
+                <Download className="w-5 h-5 text-white" />
+              </span>
+              <div>
+                <h3 className="font-black text-base text-white">
+                  Vos Accès & Téléchargements Digitaux Immédiats
+                </h3>
+                <span className="text-[11px] text-blue-200">
+                  Délivrance sécurisée par MARCHE LUMUMBA RDC
+                </span>
+              </div>
+            </div>
+            <span className="bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
+              Accès Débloqué
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {order.digitalDeliveryLinks.map((dl) => (
+              <div
+                key={dl.id}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-3"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <span className="font-black text-sm text-white block">
+                      {dl.productName}
+                    </span>
+                    <span className="text-xs text-blue-300 flex items-center gap-2 mt-0.5">
+                      <span>Format : {dl.digitalType?.toUpperCase() || 'FICHIER'}</span>
+                      <span>·</span>
+                      <span>Boutique : {dl.shopName || 'Marchand MLM'}</span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleDownload(dl.id)}
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Accéder / Télécharger</span>
+                    </button>
+                    <button
+                      onClick={() => handleCopyLink(dl.secureAccessToken, dl.deliveryUrl)}
+                      className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs transition-colors"
+                      title="Copier le lien"
+                    >
+                      {copiedToken === dl.secureAccessToken ? (
+                        <Check className="w-4 h-4 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-4 h-4 text-blue-200" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] text-blue-200 pt-2 border-t border-white/10">
+                  <div className="flex items-center gap-3">
+                    <span>
+                      Téléchargements autorisés :{' '}
+                      <strong>
+                        {dl.downloadLimit > 0
+                          ? `${dl.downloadCount} / ${dl.downloadLimit}`
+                          : 'Illimité'}
+                      </strong>
+                    </span>
+                    {dl.expiresAt && (
+                      <span>
+                        Expire le :{' '}
+                        <strong>
+                          {new Date(dl.expiresAt).toLocaleDateString('fr-FR')}
+                        </strong>
+                      </span>
+                    )}
+                  </div>
+                  {downloadMessages[dl.id] && (
+                    <span className="text-emerald-300 font-bold">
+                      {downloadMessages[dl.id]}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[11px] text-blue-200/80 leading-relaxed pt-1">
+            💡 Vous pouvez également retrouver l'ensemble de vos fichiers et formations à tout moment dans votre <strong>Espace Client → Mes Achats Digitaux</strong>.
+          </p>
         </div>
       )}
 

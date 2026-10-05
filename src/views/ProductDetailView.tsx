@@ -18,6 +18,10 @@ import {
   Share2,
   AlertCircle,
   Flame,
+  FileText,
+  Download,
+  ShieldCheck,
+  Wallet,
 } from 'lucide-react';
 
 interface ProductDetailViewProps {
@@ -174,10 +178,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <span className="text-stone-300">|</span>
               <span
                 className={`font-semibold ${
-                  product.stock > 0 ? 'text-emerald-700' : 'text-red-600'
+                  product.productType === 'digital'
+                    ? 'text-blue-700 font-bold'
+                    : product.stock > 0
+                    ? 'text-emerald-700'
+                    : 'text-red-600'
                 }`}
               >
-                {product.stock > 0
+                {product.productType === 'digital'
+                  ? '📱 Produit digital · Accès immédiat'
+                  : product.stock > 0
                   ? `En stock (${product.stock} disponibles)`
                   : 'Rupture de stock'}
               </span>
@@ -200,6 +210,43 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </span>
             )}
           </div>
+
+          {/* Digital Product Delivery Card */}
+          {product.productType === 'digital' && (
+            <div className="p-4 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-black text-blue-950 flex items-center gap-1.5">
+                  <FileText className="w-4 h-4 text-blue-700" />
+                  Format : {product.digitalType?.toUpperCase() || 'FICHIER NUMÉRIQUE'}
+                </span>
+                <span className="text-[10px] font-bold uppercase bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full border border-blue-200">
+                  Téléchargement direct
+                </span>
+              </div>
+              <p className="text-[11px] text-blue-800 leading-snug">
+                Dès confirmation de votre paiement direct au vendeur, vous recevrez un accès immédiat et sécurisé au lien de téléchargement.
+              </p>
+              <div className="pt-2 border-t border-blue-200/80 flex flex-wrap gap-3 text-[10px] text-blue-900 font-medium">
+                <span>
+                  Limite :{' '}
+                  <strong>
+                    {product.digitalDownloadLimit && product.digitalDownloadLimit > 0
+                      ? `${product.digitalDownloadLimit} téléchargements`
+                      : 'Illimité'}
+                  </strong>
+                </span>
+                <span>·</span>
+                <span>
+                  Validité :{' '}
+                  <strong>
+                    {product.digitalExpiryDays && product.digitalExpiryDays > 0
+                      ? `${product.digitalExpiryDays} jours`
+                      : 'Permanente'}
+                  </strong>
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Description */}
           <div className="space-y-1.5 text-xs">

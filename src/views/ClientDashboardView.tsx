@@ -16,6 +16,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Truck,
+  Download,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
 
 interface ClientDashboardViewProps {
@@ -30,13 +33,32 @@ export const ClientDashboardView: React.FC<ClientDashboardViewProps> = ({
   onNavigate,
 }) => {
   const { currentUser, updateCurrentUserProfile } = useAuth();
-  const [activeTab, setActiveTab] = useState<'orders' | 'favorites' | 'profile'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'downloads' | 'favorites' | 'profile'>('orders');
 
   const orders = currentUser ? DataStore.getOrdersByClient(currentUser.id) : [];
+  const digitalLinks = currentUser ? DataStore.getDigitalDeliveryLinksByClient(currentUser.id) : [];
   const favoriteIds = DataStore.getFavorites();
   const favoriteProducts = DataStore.getProducts().filter((p) =>
     favoriteIds.includes(p.id)
   );
+
+  const [downloadMsg, setDownloadMsg] = useState<Record<string, string>>({});
+
+  const handleDownload = (linkId: string) => {
+    const res = DataStore.recordDigitalDownload(linkId, navigator.userAgent);
+    if (res.success && res.deliveryUrl) {
+      setDownloadMsg((prev) => ({
+        ...prev,
+        [linkId]: res.remaining && res.remaining >= 0 ? `Téléchargé (${res.remaining} restant(s))` : 'Succès !',
+      }));
+      window.open(res.deliveryUrl, '_blank');
+    } else {
+      setDownloadMsg((prev) => ({
+        ...prev,
+        [linkId]: res.message || 'Téléchargement impossible.',
+      }));
+    }
+  };
 
   // Profile edits
   const [editName, setEditName] = useState(currentUser?.name || '');
@@ -106,12 +128,24 @@ export const ClientDashboardView: React.FC<ClientDashboardViewProps> = ({
           onClick={() => setActiveTab('orders')}
           className={`pb-3 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
             activeTab === 'orders'
-              ? 'border-emerald-800 text-emerald-900'
+              ? 'border-emerald-800 text-emerald-900 font-bold'
               : 'border-transparent text-stone-500 hover:text-stone-900'
           }`}
         >
           <Package className="w-4 h-4" />
           <span>Mes Commandes ({orders.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('downloads')}
+          className={`pb-3 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
+            activeTab === 'downloads'
+              ? 'border-blue-700 text-blue-900 font-bold'
+              : 'border-transparent text-stone-500 hover:text-stone-900'
+          }`}
+        >
+          <Download className="w-4 h-4 text-blue-700" />
+          <span>Mes Achats Digitaux ({digitalLinks.length})</span>
         </button>
 
         <button
@@ -221,6 +255,82 @@ export const ClientDashboardView: React.FC<ClientDashboardViewProps> = ({
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab: Downloads (Achats Digitaux) */}
+      {activeTab === 'downloads' && (
+        <div className="space-y-4">
+          {digitalLinks.length === 0 ? (
+            <div className="p-12 text-center bg-white rounded-2xl border border-stone-200 space-y-3">
+              <Download className="w-10 h-10 text-stone-300 mx-auto" />
+              <h3 className="font-bold text-base text-stone-800">
+                Aucun achat digital pour le moment
+              </h3>
+              <p className="text-xs text-stone-500 max-w-sm mx-auto">
+                Retrouvez ici tous vos e-books, formations, logiciels et documents achetés sur MARCHE LUMUMBA RDC.
+              </p>
+              <button
+                onClick={() => onNavigate('catalog')}
+                className="px-5 py-2.5 bg-emerald-800 text-white rounded-xl text-xs font-bold hover:bg-emerald-900"
+              >
+                Explorer les produits digitaux
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {digitalLinks.map((link) => (
+                <div
+                  key={link.id}
+                  className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
+                        {link.digitalType || 'Fichier digital'}
+                      </span>
+                      <h4 className="font-bold text-sm text-stone-900 leading-snug">
+                        {link.productName}
+                      </h4>
+                      <p className="text-xs text-stone-500">
+                        Boutique : <strong>{link.shopName || 'Marchand certifié'}</strong>
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => handleDownload(link.id)}
+                      className="px-3.5 py-2 bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Télécharger</span>
+                    </button>
+                  </div>
+
+                  <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                    <span>
+                      Téléchargé :{' '}
+                      <strong>
+                        {link.downloadCount}{' '}
+                        {link.downloadLimit > 0 ? `/ ${link.downloadLimit}` : ''}
+                      </strong>
+                    </span>
+                    {link.expiresAt && (
+                      <span>
+                        Expire :{' '}
+                        <strong>{new Date(link.expiresAt).toLocaleDateString('fr-FR')}</strong>
+                      </span>
+                    )}
+                  </div>
+
+                  {downloadMsg[link.id] && (
+                    <div className="text-[11px] text-emerald-800 font-bold bg-emerald-50 p-2 rounded-lg">
+                      {downloadMsg[link.id]}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

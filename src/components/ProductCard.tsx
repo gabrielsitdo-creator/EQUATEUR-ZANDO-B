@@ -3,7 +3,7 @@ import { Product, formatPrice } from '../types';
 import { useCart } from '../context/CartContext';
 import { useNotification } from '../context/NotificationContext';
 import { DataStore } from '../services/storage';
-import { ShoppingBag, Star, Heart, CheckCircle2, MapPin, Flame } from 'lucide-react';
+import { ShoppingBag, Star, Heart, CheckCircle2, MapPin, Flame, FileText } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -66,6 +66,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <span>PROMO</span>
           </div>
         ) : null}
+
+        {/* Digital product indicator */}
+        {product.productType === 'digital' && (
+          <div className="absolute bottom-2.5 left-2.5 bg-blue-700/90 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs shadow flex items-center gap-1">
+            <FileText className="w-2.5 h-2.5" />
+            <span>{product.digitalType || 'Digital'}</span>
+          </div>
+        )}
 
         {/* Out of stock label */}
         {product.status === 'out_of_stock' && (

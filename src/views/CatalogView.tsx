@@ -45,6 +45,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
   const [inStockOnly, setInStockOnly] = useState(false);
   const [promoOnly, setPromoOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'newest' | 'price_asc' | 'price_desc' | 'rating'>('relevance');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'physical' | 'digital'>('all');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   React.useEffect(() => {
@@ -62,6 +63,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
     setMaxPrice('');
     setInStockOnly(false);
     setPromoOnly(false);
+    setTypeFilter('all');
     setSortBy('relevance');
   };
 
@@ -79,6 +81,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         if (maxPrice !== '' && p.price > Number(maxPrice)) return false;
         if (inStockOnly && p.status === 'out_of_stock') return false;
         if (promoOnly && !p.isPromoted && (!p.discountPercent || p.discountPercent <= 0)) return false;
+        if (typeFilter === 'physical' && p.productType === 'digital') return false;
+        if (typeFilter === 'digital' && p.productType !== 'digital') return false;
         return true;
       })
       .sort((a, b) => {
@@ -88,7 +92,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         if (sortBy === 'newest') return b.createdAt.localeCompare(a.createdAt);
         return 0;
       });
-  }, [searchResults.matchedProducts, selectedCat, minPrice, maxPrice, inStockOnly, promoOnly, sortBy]);
+  }, [searchResults.matchedProducts, selectedCat, minPrice, maxPrice, inStockOnly, promoOnly, typeFilter, sortBy]);
 
   // City or combined search header label
   let searchTitle = 'Tous les Produits';
@@ -219,6 +223,40 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 Effacer
               </button>
             )}
+          </div>
+
+          {/* Type de produit */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-stone-700">Type d'article</label>
+            <div className="grid grid-cols-3 gap-1 bg-stone-100 p-1 rounded-xl text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setTypeFilter('all')}
+                className={`py-1 rounded-lg transition-colors ${
+                  typeFilter === 'all' ? 'bg-white text-stone-900 shadow-xs' : 'text-stone-500'
+                }`}
+              >
+                Tous
+              </button>
+              <button
+                type="button"
+                onClick={() => setTypeFilter('physical')}
+                className={`py-1 rounded-lg transition-colors ${
+                  typeFilter === 'physical' ? 'bg-white text-amber-900 shadow-xs' : 'text-stone-500'
+                }`}
+              >
+                Physiques
+              </button>
+              <button
+                type="button"
+                onClick={() => setTypeFilter('digital')}
+                className={`py-1 rounded-lg transition-colors ${
+                  typeFilter === 'digital' ? 'bg-blue-700 text-white shadow-xs' : 'text-stone-500'
+                }`}
+              >
+                Digitaux
+              </button>
+            </div>
           </div>
 
           {/* Category */}

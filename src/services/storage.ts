@@ -20,6 +20,9 @@ import {
   SubscriptionStatus,
   CurrencyCode,
   formatPrice,
+  MerchantPaymentAccount,
+  DigitalDeliveryLink,
+  DownloadLog,
 } from '../types';
 
 import {
@@ -36,6 +39,8 @@ import {
   demoCommissions,
   demoNotifications,
   defaultSettings,
+  demoPaymentAccounts,
+  demoDigitalDeliveryLinks,
 } from './mockData';
 
 const DB_KEYS = {
@@ -54,6 +59,9 @@ const DB_KEYS = {
   SETTINGS: 'ezm_settings',
   CURRENT_USER: 'ezm_current_user',
   FAVORITES: 'ezm_favorites',
+  PAYMENT_ACCOUNTS: 'ezm_payment_accounts',
+  DIGITAL_DELIVERY_LINKS: 'ezm_digital_delivery_links',
+  DOWNLOAD_LOGS: 'ezm_download_logs',
 };
 
 function getStorageItem<T>(key: string, defaultVal: T): T {
@@ -100,6 +108,9 @@ export class DataStore {
     setStorageItem(DB_KEYS.SETTINGS, defaultSettings);
     setStorageItem(DB_KEYS.CURRENT_USER, demoUsers[0]); // Client
     setStorageItem(DB_KEYS.FAVORITES, ['prod-1', 'prod-5', 'prod-10']);
+    setStorageItem(DB_KEYS.PAYMENT_ACCOUNTS, demoPaymentAccounts);
+    setStorageItem(DB_KEYS.DIGITAL_DELIVERY_LINKS, demoDigitalDeliveryLinks);
+    setStorageItem(DB_KEYS.DOWNLOAD_LOGS, []);
   }
 
   // --- SETTINGS ---
@@ -752,16 +763,69 @@ export class DataStore {
     const orderId = `ord-${timestamp}`;
 
     let paymentTransactionRef = '';
-    if (params.paymentMethod === 'mpesa') {
-      paymentTransactionRef = `MPESA-TEST-TX${Math.floor(10000 + Math.random() * 90000)}`;
+    if (params.paymentMethod === 'saspay') {
+      paymentTransactionRef = `SASPAY-TX${Math.floor(100000 + Math.random() * 900000)}`;
+    } else if (params.paymentMethod === 'mpesa') {
+      paymentTransactionRef = `MPESA-TX${Math.floor(10000 + Math.random() * 90000)}`;
     } else if (params.paymentMethod === 'airtel') {
-      paymentTransactionRef = `AIRTEL-TEST-${Math.floor(10000 + Math.random() * 90000)}`;
+      paymentTransactionRef = `AIRTEL-TX${Math.floor(10000 + Math.random() * 90000)}`;
     } else if (params.paymentMethod === 'orange') {
-      paymentTransactionRef = `ORANGE-TEST-${Math.floor(10000 + Math.random() * 90000)}`;
+      paymentTransactionRef = `ORANGE-TX${Math.floor(10000 + Math.random() * 90000)}`;
+    } else if (params.paymentMethod === 'paypal') {
+      paymentTransactionRef = `PAYPAL-TX${Math.floor(100000 + Math.random() * 900000)}`;
+    } else if (params.paymentMethod === 'stripe') {
+      paymentTransactionRef = `STRIPE-CH${Math.floor(100000 + Math.random() * 900000)}`;
+    } else if (params.paymentMethod === 'bank_transfer') {
+      paymentTransactionRef = `BANK-TRF-${Math.floor(100000 + Math.random() * 900000)}`;
     }
 
     const commissionRate = settings.commissionRate || 5;
     const commissionTotal = Math.round((params.subtotal * commissionRate) / 100);
+
+    // Vérifier et générer les liens sécurisés pour produits digitaux
+    const allProducts = this.getProducts();
+    const digitalLinks: DigitalDeliveryLink[] = [];
+    const storedDigitalLinks = this.getDigitalDeliveryLinks();
+
+    params.items.forEach((item) => {
+      const prod = allProducts.find((p) => p.id === item.productId);
+      const isDigital = prod?.productType === 'digital' || item.productType === 'digital';
+      if (isDigital && prod?.digitalDeliveryUrl) {
+        const linkId = `dl-${timestamp}-${Math.floor(Math.random() * 1000)}`;
+        const token = `mlm_dig_${Math.random().toString(36).substring(2, 10)}_${Date.now()}`;
+        const expiryDays = prod.digitalExpiryDays ?? 30;
+        const expiresAt =
+          expiryDays > 0 ? new Date(Date.now() + expiryDays * 86400000).toISOString() : undefined;
+        const linkObj: DigitalDeliveryLink = {
+          id: linkId,
+          orderId,
+          orderNumber,
+          productId: prod.id,
+          productName: prod.name,
+          shopId: prod.shopId,
+          shopName: prod.shopName,
+          clientId: params.clientId,
+          clientEmail: params.clientEmail,
+          clientPhone: params.clientPhone,
+          secureAccessToken: token,
+          deliveryUrl: prod.digitalDeliveryUrl,
+          digitalType: prod.digitalType || 'autre',
+          downloadLimit: prod.digitalDownloadLimit ?? 5,
+          downloadCount: 0,
+          expiresAt,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        };
+        digitalLinks.push(linkObj);
+        storedDigitalLinks.unshift(linkObj);
+      }
+    });
+
+    if (digitalLinks.length > 0) {
+      setStorageItem(DB_KEYS.DIGITAL_DELIVERY_LINKS, storedDigitalLinks);
+    }
+
+    const hasDigital = digitalLinks.length > 0;
 
     const newOrder: Order = {
       id: orderId,
@@ -777,8 +841,8 @@ export class DataStore {
       totalAmount: params.totalAmount,
       currency: params.items[0]?.currency || 'CDF',
       currency_code: params.items[0]?.currency || 'CDF',
-      status: 'confirmed', // Commerçant receives confirmed order to organize delivery
-      deliveryType: params.deliveryType,
+      status: 'confirmed', // Commerçant reçoit la commande confirmée
+      deliveryType: hasDigital && params.items.every((it) => it.productType === 'digital') ? 'digital_instant' : params.deliveryType,
       deliveryAddress: params.deliveryAddress,
       paymentMethod: params.paymentMethod,
       paymentStatus: params.paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid',
@@ -788,6 +852,8 @@ export class DataStore {
       notes: params.notes,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      containsDigitalItems: hasDigital,
+      digitalDeliveryLinks: digitalLinks,
     };
 
     orders.unshift(newOrder);
@@ -999,6 +1065,196 @@ export class DataStore {
     return isFav;
   }
 
+  // --- PAIEMENTS DIRECTS COMMERÇANTS (SASPAY.me & Multi-passerelles) ---
+  static getPaymentAccounts(): MerchantPaymentAccount[] {
+    return getStorageItem<MerchantPaymentAccount[]>(DB_KEYS.PAYMENT_ACCOUNTS, demoPaymentAccounts);
+  }
+
+  static getMerchantPaymentAccount(shopId: string): MerchantPaymentAccount {
+    const accs = this.getPaymentAccounts();
+    const found = accs.find((a) => a.shopId === shopId);
+    if (found) return found;
+
+    // Compte par défaut prêt à l'emploi
+    const shop = this.getShopById(shopId);
+    const newAcc: MerchantPaymentAccount = {
+      id: `pay-acc-${shopId}`,
+      shopId,
+      merchantId: shop?.ownerId || 'merchant-owner',
+      saspayEnabled: true,
+      saspayMerchantId: `SAS-MLM-${shopId.toUpperCase().slice(-4)}`,
+      saspayWalletPhone: shop?.ownerPhone || '+243820000000',
+      saspayEnvironment: 'live',
+      directMobileMoneyEnabled: true,
+      mpesaNumber: shop?.ownerPhone || '',
+      airtelNumber: shop?.ownerPhone || '',
+      orangeNumber: shop?.ownerPhone || '',
+      mobileMoneyAccountName: shop?.name || 'Mon Compte Vendeur',
+      paypalEnabled: false,
+      stripeEnabled: false,
+      bankEnabled: false,
+      paymentInstructions: 'Paiement direct sécurisé au commerçant via SasPay.me ou Mobile Money direct.',
+      updatedAt: new Date().toISOString(),
+    };
+    accs.push(newAcc);
+    setStorageItem(DB_KEYS.PAYMENT_ACCOUNTS, accs);
+    return newAcc;
+  }
+
+  static saveMerchantPaymentAccount(account: MerchantPaymentAccount): void {
+    const accs = this.getPaymentAccounts();
+    const idx = accs.findIndex((a) => a.shopId === account.shopId);
+    account.updatedAt = new Date().toISOString();
+    if (idx > -1) {
+      accs[idx] = account;
+    } else {
+      accs.push(account);
+    }
+    setStorageItem(DB_KEYS.PAYMENT_ACCOUNTS, accs);
+  }
+
+  // --- LIVRAISONS PRODUITS DIGITAUX SÉCURISÉES ---
+  static getDigitalDeliveryLinks(): DigitalDeliveryLink[] {
+    return getStorageItem<DigitalDeliveryLink[]>(DB_KEYS.DIGITAL_DELIVERY_LINKS, demoDigitalDeliveryLinks);
+  }
+
+  static getDigitalDeliveryLinksByClient(clientId: string): DigitalDeliveryLink[] {
+    return this.getDigitalDeliveryLinks().filter((l) => l.clientId === clientId);
+  }
+
+  static getDigitalDeliveryLinksByShop(shopId: string): DigitalDeliveryLink[] {
+    return this.getDigitalDeliveryLinks().filter((l) => l.shopId === shopId);
+  }
+
+  static getDigitalDeliveryLinkByToken(token: string): DigitalDeliveryLink | null {
+    return this.getDigitalDeliveryLinks().find((l) => l.secureAccessToken === token) || null;
+  }
+
+  static recordDigitalDownload(
+    linkId: string,
+    userAgent?: string
+  ): { success: boolean; deliveryUrl?: string; remaining?: number; message?: string } {
+    const links = this.getDigitalDeliveryLinks();
+    const link = links.find((l) => l.id === linkId);
+    if (!link) {
+      return { success: false, message: 'Lien de téléchargement introuvable.' };
+    }
+    if (!link.isActive) {
+      return { success: false, message: 'Ce lien de téléchargement a été temporairement désactivé par le vendeur.' };
+    }
+    if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+      return { success: false, message: `Ce lien a expiré le ${new Date(link.expiresAt).toLocaleDateString('fr-FR')}.` };
+    }
+    if (link.downloadLimit > 0 && link.downloadCount >= link.downloadLimit) {
+      return { success: false, message: `La limite autorisée de ${link.downloadLimit} téléchargements est atteinte.` };
+    }
+
+    link.downloadCount = (link.downloadCount || 0) + 1;
+    link.lastDownloadedAt = new Date().toISOString();
+    setStorageItem(DB_KEYS.DIGITAL_DELIVERY_LINKS, links);
+
+    // Enregistrer le log de téléchargement
+    const logs = getStorageItem<DownloadLog[]>(DB_KEYS.DOWNLOAD_LOGS, []);
+    logs.unshift({
+      id: `log-${Date.now()}`,
+      deliveryLinkId: link.id,
+      orderId: link.orderId,
+      productId: link.productId,
+      timestamp: new Date().toISOString(),
+      userAgent: userAgent || 'Navigateur Client Web',
+    });
+    setStorageItem(DB_KEYS.DOWNLOAD_LOGS, logs);
+
+    const remaining = link.downloadLimit > 0 ? Math.max(0, link.downloadLimit - link.downloadCount) : -1;
+    return {
+      success: true,
+      deliveryUrl: link.deliveryUrl,
+      remaining,
+      message: 'Téléchargement autorisé avec succès.',
+    };
+  }
+
+  static toggleDigitalLinkActive(linkId: string, isActive: boolean): void {
+    const links = this.getDigitalDeliveryLinks();
+    const link = links.find((l) => l.id === linkId);
+    if (link) {
+      link.isActive = isActive;
+      setStorageItem(DB_KEYS.DIGITAL_DELIVERY_LINKS, links);
+    }
+  }
+
+  static updateDigitalDeliveryUrl(productId: string, newUrl: string): void {
+    const products = this.getProducts();
+    const prod = products.find((p) => p.id === productId);
+    if (prod) {
+      prod.digitalDeliveryUrl = newUrl;
+      setStorageItem(DB_KEYS.PRODUCTS, products);
+    }
+    const links = this.getDigitalDeliveryLinks();
+    links.forEach((l) => {
+      if (l.productId === productId) {
+        l.deliveryUrl = newUrl;
+      }
+    });
+    setStorageItem(DB_KEYS.DIGITAL_DELIVERY_LINKS, links);
+  }
+
+  // --- STATS MES VENTES (Strictement propres à CE commerçant) ---
+  static getMerchantSalesStats(shopId: string) {
+    const orders = this.getOrders();
+    const shopProducts = this.getProducts().filter((p) => p.shopId === shopId);
+    const shopOrders = orders.filter((o) => o.items.some((i) => i.shopId === shopId));
+
+    let totalRevenue = 0;
+    let productsSoldCount = 0;
+    let digitalProductsSoldCount = 0;
+    let physicalProductsSoldCount = 0;
+    let successfulPayments = 0;
+    let failedPayments = 0;
+    let pendingOrders = 0;
+
+    shopOrders.forEach((order) => {
+      const itemsForShop = order.items.filter((i) => i.shopId === shopId);
+      const shopOrderTotal = itemsForShop.reduce((sum, it) => sum + it.totalPrice, 0);
+
+      if (order.status === 'delivered' || order.status === 'confirmed' || order.paymentStatus === 'paid') {
+        totalRevenue += shopOrderTotal;
+      }
+
+      if (order.paymentStatus === 'paid') {
+        successfulPayments++;
+      } else if (order.paymentStatus === 'failed' || order.status === 'cancelled') {
+        failedPayments++;
+      }
+
+      if (order.status === 'pending' || order.status === 'processing') {
+        pendingOrders++;
+      }
+
+      itemsForShop.forEach((it) => {
+        productsSoldCount += it.quantity;
+        const pObj = shopProducts.find((p) => p.id === it.productId);
+        if (it.productType === 'digital' || pObj?.productType === 'digital') {
+          digitalProductsSoldCount += it.quantity;
+        } else {
+          physicalProductsSoldCount += it.quantity;
+        }
+      });
+    });
+
+    return {
+      totalOrders: shopOrders.length,
+      totalRevenue,
+      productsSoldCount,
+      digitalProductsSoldCount,
+      physicalProductsSoldCount,
+      successfulPayments,
+      failedPayments,
+      pendingOrders,
+      shopOrders,
+    };
+  }
+
   // --- ADMIN STATS ---
   static getAdminStats() {
     const users = this.getUsers();
@@ -1015,6 +1271,14 @@ export class DataStore {
 
     const totalCommissionsFc = commissions.reduce((sum, c) => sum + c.commissionAmount, 0);
 
+    const digitalProductsCount = products.filter((p) => p.productType === 'digital').length;
+    const physicalProductsCount = products.filter((p) => p.productType !== 'digital').length;
+
+    // Revenus plateforme : abonnements commerçants (4$/mois)
+    const marketplaceSubscriptionRevenueUsd = subscriptions
+      .filter((s) => s.status === 'PAID' || (s.status as any) === 'active')
+      .reduce((sum, s) => sum + (s.amountUsd || 4), 0);
+
     return {
       totalUsers: users.length,
       clientsCount: users.filter((u) => u.role === 'CLIENT').length,
@@ -1022,13 +1286,17 @@ export class DataStore {
       totalShops: shops.length,
       verifiedShops: shops.filter((s) => s.isVerified).length,
       totalProducts: products.length,
+      digitalProductsCount,
+      physicalProductsCount,
       promotedProducts: this.getPromotedProducts().length,
       totalOrders: orders.length,
       totalSubscriptions: subscriptions.length,
-      activeSubscriptions: subscriptions.filter((s) => s.status === 'active').length,
+      activeSubscriptions: subscriptions.filter((s) => s.status === 'active' || s.status === 'PAID').length,
       totalReports: reports.length,
       pendingReports: reports.filter((r) => r.status === 'pending').length,
+      merchantsVolumeSales: totalSalesFc,
       totalSalesFc,
+      marketplaceSubscriptionRevenueUsd,
       totalCommissionsFc,
     };
   }

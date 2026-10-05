@@ -204,44 +204,74 @@ export const AdminDashboardView: React.FC = () => {
         </div>
       </div>
 
+      {/* Bannière de distinction financière (Règle fondamentale) */}
+      <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 text-stone-700">
+          <ShieldCheck className="w-5 h-5 text-purple-700 shrink-0" />
+          <span>
+            <strong>Séparation financière stricte :</strong> MARCHE LUMUMBA RDC ne centralise aucun fonds marchand. Les paiements clients sont directement versés aux commerçants via leurs propres passerelles (SasPay.me, Mobile Money, etc.).
+          </span>
+        </div>
+      </div>
+
       {/* KPI Global Platform Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
-          <div className="text-[11px] text-stone-500 font-semibold">Ventes totales</div>
-          <div className="text-base sm:text-lg font-black text-stone-900 mt-1">
+        {/* 1. Revenus Marchands */}
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-1">
+          <div className="text-[11px] text-stone-500 font-semibold">Volume Ventes Marchands</div>
+          <div className="text-base sm:text-lg font-black text-stone-900">
             {stats.totalSalesFc.toLocaleString('fr-FR')} FC
           </div>
+          <span className="text-[10px] text-stone-400 block font-medium">Fonds directs marchands</span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
-          <div className="text-[11px] text-stone-500 font-semibold">Commissions (5%)</div>
-          <div className="text-base sm:text-lg font-black text-emerald-800 mt-1">
-            {stats.totalCommissionsFc.toLocaleString('fr-FR')} FC
+        {/* 2. Revenus Plateforme (Abonnements 4$) */}
+        <div className="bg-purple-50/80 p-4 rounded-2xl border border-purple-200 space-y-1">
+          <div className="text-[11px] text-purple-900 font-bold">Revenus Marketplace</div>
+          <div className="text-base sm:text-lg font-black text-purple-950">
+            {stats.marketplaceSubscriptionRevenueUsd || subscriptions.filter((s) => s.status === 'PAID' || (s.status as any) === 'active').length * 4} $ USD
           </div>
+          <span className="text-[10px] text-purple-700 block font-semibold">
+            {subscriptions.filter((s) => s.status === 'PAID' || (s.status as any) === 'active').length} abonnement(s) 4$/mois
+          </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
-          <div className="text-[11px] text-stone-500 font-semibold">Paiements 4$</div>
-          <div className="text-base sm:text-lg font-black text-amber-800 mt-1">
-            {subscriptions.filter((s) => s.status === 'PAID' || (s.status as any) === 'active').length} payé(s)
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
+        {/* 3. Boutiques */}
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-1">
           <div className="text-[11px] text-stone-500 font-semibold">Boutiques actives</div>
-          <div className="text-base sm:text-lg font-black text-stone-900 mt-1">{stats.totalShops}</div>
+          <div className="text-base sm:text-lg font-black text-stone-900">{stats.totalShops}</div>
+          <span className="text-[10px] text-emerald-700 font-bold block">
+            {stats.verifiedShops} certifiée(s)
+          </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
-          <div className="text-[11px] text-stone-500 font-semibold">Produits réels</div>
-          <div className="text-base sm:text-lg font-black text-stone-900 mt-1">{stats.totalProducts}</div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-stone-200">
-          <div className="text-[11px] text-stone-500 font-semibold">Signalements</div>
-          <div className="text-base sm:text-lg font-black text-red-700 mt-1">
-            {stats.pendingReports} en attente
+        {/* 4. Produits Physiques */}
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-1">
+          <div className="text-[11px] text-stone-500 font-semibold">Produits Physiques</div>
+          <div className="text-base sm:text-lg font-black text-amber-900">
+            {stats.physicalProductsCount}
           </div>
+          <span className="text-[10px] text-amber-700 font-medium block">Articles en rayon</span>
+        </div>
+
+        {/* 5. Produits Digitaux */}
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-1">
+          <div className="text-[11px] text-stone-500 font-semibold">Produits Digitaux</div>
+          <div className="text-base sm:text-lg font-black text-blue-900">
+            {stats.digitalProductsCount}
+          </div>
+          <span className="text-[10px] text-blue-700 font-medium block">E-books, vidéos, zips</span>
+        </div>
+
+        {/* 6. Commandes */}
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-1">
+          <div className="text-[11px] text-stone-500 font-semibold">Commandes totales</div>
+          <div className="text-base sm:text-lg font-black text-emerald-900">
+            {stats.totalOrders}
+          </div>
+          <span className="text-[10px] text-stone-400 font-medium block">
+            {stats.pendingReports} signalement(s)
+          </span>
         </div>
       </div>
 
